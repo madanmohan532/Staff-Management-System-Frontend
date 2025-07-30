@@ -50,28 +50,40 @@ const Login = () => {
     setLoginError("");
 
     axios
-      .post("http://localhost:9999/login-service/api/login", null, {
-        params: {
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-        },
-      })
+      .post(
+        "http://localhost:9999/registration-service/api/login/login",
+        null,
+        {
+          params: {
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+          },
+        }
+      )
       .then((response) => {
+        console.log(response);
+
         if (response.status === 200) {
           const { user } = response.data;
 
+          console.log(response.data);
+
           // Pass only email to dashboard (change as needed)
           navigate("/dashboard", { state: { email: user.email } });
-        } else if (response.status === 403) {
+        } else {
           setLoginError(
-            response.data.message || "Login failed, please try again"
+            response.data.message ||
+              response.data ||
+              "Login failed, please try again"
           );
         }
       })
       .catch((error) => {
         setLoginError(
-          error.response?.data?.message || "Login failed, please try again"
+          error.response.data.message ||
+            error.response.data ||
+            "Login failed,try again"
         );
       })
       .finally(() => {
