@@ -1,0 +1,106 @@
+/* Container styles consistent with registration pages */
+.login-container {
+  background-color: #f4f6fb;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form {
+  background: #fff;
+  padding: 2.5rem 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #232323;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.input-group input,
+.input-group select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: white;
+  font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #ff6584;
+  box-shadow: 0 0 0 2px rgba(255, 101, 132, 0.2);
+}
+
+.error-input {
+  border-color: #ff6584 !important;
+  background-color: rgba(255, 101, 132, 0.05) !important;
+}
+
+.error-msg {
+  color: #ff6584;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.login-error {
+  text-align: center;
+  color: #ff6584;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.login-button {
+  background-color: #ff6584;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: #e55a75;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 101, 132, 0.35);
+}
+
+.login-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
