@@ -1,0 +1,132 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  width: 80%;
+  max-width: 90vw;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 2rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #d96fd7;
+}
+
+.btn-close {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #f56060;
+  padding: 4px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-close:hover {
+  background-color: #edd6da;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.modal-form input,
+.modal-form select {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.modal-form input:focus {
+  outline: none;
+
+  box-shadow: 0 0 6px #d6bbf5;
+}
+
+fieldset {
+  border-radius: 6px;
+  border: 1.5px solid #bbb;
+  padding: 1rem 1.25rem 1.25rem;
+  margin-top: 0.25rem;
+}
+
+legend {
+  font-weight: 700;
+  padding: 0 0.5rem;
+  color: #555;
+}
+
+.modal-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn {
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: #eee;
+  color: #555;
+}
+
+.btn-cancel:hover {
+  background-color: #ccc;
+}
+
+.btn-save {
+  background-color: #a06cef;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #7c53e5;
+}
+
+.required {
+  color: red;
+  margin-left: 3px;
+}

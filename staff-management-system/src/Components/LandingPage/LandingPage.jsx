@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { FaPeopleGroup } from "react-icons/fa6";
 import axios from "axios";
@@ -9,6 +9,8 @@ const LandingPage = () => {
   const [hospitals, setHospitals] = useState(0);
   const [nurses, setNurses] = useState(0);
   const navigate = useNavigate();
+
+  const ctaRef = useRef(null);
 
   const fetchUsers = async () => {
     await axios
@@ -42,6 +44,14 @@ const LandingPage = () => {
     navigate("/nurse-registration");
   };
 
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  const handleRegister = () => {
+    ctaRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <Container>
       <Header>
@@ -51,8 +61,8 @@ const LandingPage = () => {
           </LogoIcon>
         </Logo>
         <AuthButtons>
-          <LoginButton>Login</LoginButton>
-          <RegisterButton>Register</RegisterButton>
+          <LoginButton onClick={handleLogin}>Login</LoginButton>
+          <RegisterButton onClick={handleRegister}>Register</RegisterButton>
         </AuthButtons>
       </Header>
 
@@ -109,7 +119,7 @@ const LandingPage = () => {
         </StatItem>
       </StatsSection>
 
-      <CtaSection>
+      <CtaSection ref={ctaRef} id="register">
         <CtaTitle>Ready to Get Started ?</CtaTitle>
         <CtaButtons>
           <HospitalCta onClick={handleHospitalRegistration}>

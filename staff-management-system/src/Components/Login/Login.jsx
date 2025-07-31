@@ -70,7 +70,7 @@ const Login = () => {
           console.log(response.data);
 
           // Pass only email to dashboard (change as needed)
-          navigate("/dashboard", { state: { email: user.email } });
+          navigate(`/${user.role}`, { state: { email: user.email } });
         } else {
           setLoginError(
             response.data.message ||

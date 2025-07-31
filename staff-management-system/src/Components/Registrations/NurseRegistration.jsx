@@ -121,7 +121,7 @@ const NurseRegistration = () => {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result.split(",")[1];
+        const base64String = reader.result; // Remove data: prefix
         setValue("certificate", base64String);
         setCertificateFile(file);
       };

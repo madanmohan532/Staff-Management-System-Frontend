@@ -696,7 +696,7 @@ const HospitalRegistration = () => {
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result.split(",")[1]; // Remove data: prefix
+        const base64String = reader.result; // Remove data: prefix
         setValue("certificate", base64String);
         setCertificateFile(file);
       };

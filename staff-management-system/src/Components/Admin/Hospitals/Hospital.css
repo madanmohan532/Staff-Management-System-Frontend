@@ -1,0 +1,154 @@
+.hospital-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hospital-title {
+  text-align: center;
+  color: #4a1dbb;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #611dc8;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.hospital-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hospital-table th,
+.hospital-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.hospital-table thead {
+  background-color: #611dc8;
+  color: white;
+  font-weight: 700;
+}
+
+.hospital-table tbody tr:hover {
+  background-color: #f3eaff;
+  cursor: pointer;
+}
+
+.status-badge {
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+  user-select: none;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-approved {
+  background-color: #32a852;
+}
+
+.status-pending {
+  background-color: #d9a532;
+}
+
+.status-rejected {
+  background-color: #b53a3a;
+}
+
+/* Actions */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: start;
+}
+
+.btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.btn-edit:hover {
+  background-color: #d6bbf5;
+  color: #4a1dbb;
+}
+
+.btn-delete:hover {
+  background-color: #f5baba;
+  color: #b53a3a;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  gap: 1rem;
+}
+
+.page-btn {
+  background-color: #611dc8;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  min-width: 70px;
+}
+
+.page-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.page-btn:not(:disabled):hover {
+  background-color: #480e9c;
+}
+
+.page-info {
+  font-weight: 600;
+  font-size: 1rem;
+  user-select: none;
+}
