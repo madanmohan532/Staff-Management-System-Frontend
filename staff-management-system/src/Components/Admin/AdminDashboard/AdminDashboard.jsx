@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import { MdAppRegistration } from "react-icons/md";
 import axios, { all } from "axios";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 const AdminDashboard = () => {
   const location = useLocation();
@@ -24,8 +24,12 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [allNurses, setAllNurses] = useState([]);
   const [allHospitals, setAllHospitals] = useState([]);
-  const [userEmail, setUserEmail] = useState(location.state?.email || "");
+  const [userEmail, setUserEmail] = useState(
+    localStorage.getItem("userEmail") || ""
+  );
   const [loggedInUser, setLoggedInUser] = useState({});
+
+  const navigate = useNavigate();
 
   const [registrationCount, setRegistrationCount] = useState(0);
 
@@ -119,11 +123,15 @@ const AdminDashboard = () => {
   }, [users]);
 
   const handleHospitalClick = () => {
-    setActiveView("hospitals");
+    // navigate("hospitals");
   };
 
   const handleNurseClick = () => {
-    setActiveView("nurses");
+    // navigate("/nurses");
+  };
+
+  const handleWorkinDayClick = () => {
+    // navigate("/attendance");
   };
 
   const renderView = () => {
@@ -133,13 +141,13 @@ const AdminDashboard = () => {
           // In your AdminDashboard.jsx or wherever you're using RegistrationApproval
           <RegistrationApproval
             pendingHospitals={() => {
-              console.log(allHospitals); // Check what this contains
+              // Check what this contains
               return allHospitals.filter(
                 (hospital) => hospital.registrationStatus === "pending"
               );
             }}
             pendingNurses={() => {
-              console.log(allNurses); // Check what this contains
+              // Check what this contains
               return allNurses.filter(
                 (nurse) => nurse.registrationStatus === "pending"
               );
@@ -167,7 +175,7 @@ const AdminDashboard = () => {
                 <h3>Active Nurses</h3>
                 <p className="stat-number">{activeNurses}</p>
               </div>
-              <div className="stat-card">
+              <div className="stat-card" onClick={handleWorkinDayClick}>
                 <FaCalendarAlt className="stat-icon" />
                 <h3>Nurses Working Today</h3>
                 <p className="stat-number">{nursesWorking}</p>

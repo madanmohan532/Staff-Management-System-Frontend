@@ -1,6 +1,6 @@
 .hospital-container {
-  max-width: 900px;
-  margin: 2rem auto;
+  width: 100%;
+  margin: auto;
   padding: 0 1rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }

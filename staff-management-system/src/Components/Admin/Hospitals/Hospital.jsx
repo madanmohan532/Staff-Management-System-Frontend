@@ -52,7 +52,8 @@ const Hospital = () => {
       return;
     try {
       const res = await axios.delete(
-        `http://localhost:9999/admin-service/api/admin/hospital/delete/${hospital._id}`
+        `http://localhost:9999/admin-service/api/admin/hospital/deleteNurse`,
+        hospital._id
       );
       if (res.status === 200 || res.status === 204) {
         setHospitals((prev) => prev.filter((h) => h._id !== hospital._id));

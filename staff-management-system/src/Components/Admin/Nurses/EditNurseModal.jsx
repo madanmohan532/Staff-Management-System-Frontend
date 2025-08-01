@@ -1,50 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { FiX } from "react-icons/fi";
-import "./EditHospitalModal.css";
+import "./editnursemodal.css";
 import { Button, Box, Typography } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ImageIcon from "@mui/icons-material/Image";
 
-const EditHospitalModal = ({ hospital, onClose, onSave }) => {
+const EditNurseModal = ({ nurse, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    ceoName: "",
+    firstName: "",
+    lastName: "",
+    availableStatus: true,
+    phone: "",
+    email: "",
+    certificate: null,
+    yearOfExperience: 0,
+    password: "",
+    certificateNumber: "",
     street: "",
     city: "",
     state: "",
     pincode: "",
-    kmcNumber: "",
-    certificate: null,
-    password: "",
-    phone: "",
-    email: "",
-    staffDetails: "",
+    currentWorkingStatus: true,
+    skills: "",
+    selfDescription: "",
+    registrationStatus: "approved",
   });
   const [preview, setPreview] = useState(null);
   const [newCertificate, setNewCertificate] = useState(null);
 
   useEffect(() => {
-    if (hospital) {
+    if (nurse) {
       setFormData({
-        name: hospital.name || "",
-        ceoName: hospital.ceoName || "",
-        street: hospital.address?.street || "",
-        city: hospital.address?.city || "",
-        state: hospital.address?.state || "",
-        pincode: hospital.address?.pincode || "",
-        kmcNumber: hospital.kmcNumber || "",
-        certificate: hospital.certificate,
-        password: hospital.password || "",
-        phone: hospital.contactDetails?.phone || "",
-        email: hospital.contactDetails?.email || "",
-        staffDetails: (hospital.staffDetails || []).join(", "),
+        firstName: nurse.firstName || "",
+        lastName: nurse.lastName || "",
+        availableStatus: nurse.availableStatus || true,
+        phone: nurse.contactDetails?.phone || "",
+        email: nurse.contactDetails?.email || "",
+        certificate: nurse.certificate,
+        yearOfExperience: nurse.yearOfExperience || 0,
+        password: nurse.password || "",
+        certificateNumber: nurse.certificateNumber || "",
+        street: nurse.address?.street || "",
+        city: nurse.address?.city || "",
+        state: nurse.address?.state || "",
+        pincode: nurse.address?.pincode || "",
+        currentWorkingStatus: nurse.currentWorkingStatus || true,
+        skills: (nurse.skills || []).join(", "),
+        selfDescription: nurse.selfDescription || "",
+        registrationStatus: nurse.registrationStatus || "approved",
       });
     }
-  }, [hospital]);
+  }, [nurse]);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "certificate") {
+    const { name, value, type, checked, files } = e.target;
+
+    if (type === "checkbox") {
+      setFormData((prev) => ({ ...prev, [name]: checked }));
+    } else if (name === "certificate") {
       const file = files[0];
       if (file) {
         setNewCertificate(file);
@@ -85,26 +98,31 @@ const EditHospitalModal = ({ hospital, onClose, onSave }) => {
 
     saveCertificate().then((certificateData) => {
       const updated = {
-        ...hospital,
-        name: formData.name,
-        ceoName: formData.ceoName,
+        ...nurse,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        availableStatus: formData.availableStatus,
+        contactDetails: {
+          phone: formData.phone,
+          email: formData.email,
+        },
+        certificate: certificateData,
+        yearOfExperience: formData.yearOfExperience,
+        password: formData.password,
+        certificateNumber: formData.certificateNumber,
         address: {
           street: formData.street,
           city: formData.city,
           state: formData.state,
           pincode: formData.pincode,
         },
-        kmcNumber: formData.kmcNumber,
-        certificate: certificateData,
-        password: formData.password,
-        contactDetails: {
-          phone: formData.phone,
-          email: formData.email,
-        },
-        staffDetails: formData.staffDetails
+        currentWorkingStatus: formData.currentWorkingStatus,
+        skills: formData.skills
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean),
+        selfDescription: formData.selfDescription,
+        registrationStatus: formData.registrationStatus,
       };
 
       onSave(updated);
@@ -142,7 +160,7 @@ const EditHospitalModal = ({ hospital, onClose, onSave }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <header className="modal-header">
-          <h2>Edit Hospital</h2>
+          <h2>Edit Nurse</h2>
           <button
             className="btn-close"
             onClick={onClose}
@@ -153,28 +171,53 @@ const EditHospitalModal = ({ hospital, onClose, onSave }) => {
         </header>
 
         <form className="modal-form" onSubmit={handleSubmit}>
-          <label>
-            Name<span className="required">*</span>:
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Hospital Name"
-            />
-          </label>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <label style={{ flex: 1 }}>
+              First Name<span className="required">*</span>:
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                placeholder="First Name"
+              />
+            </label>
+            <label style={{ flex: 1 }}>
+              Last Name:
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Last Name"
+              />
+            </label>
+          </div>
 
-          <label>
-            CEO Name:
-            <input
-              type="text"
-              name="ceoName"
-              value={formData.ceoName}
-              onChange={handleChange}
-              placeholder="CEO Name"
-            />
-          </label>
+          <fieldset>
+            <legend>Contact Details</legend>
+            <label>
+              Phone:
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Phone Number"
+              />
+            </label>
+            <label>
+              Email:
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+              />
+            </label>
+          </fieldset>
 
           <fieldset>
             <legend>Address</legend>
@@ -221,13 +264,26 @@ const EditHospitalModal = ({ hospital, onClose, onSave }) => {
           </fieldset>
 
           <label>
-            KMC Number:
+            Certificate Number:
             <input
               type="text"
-              name="kmcNumber"
-              value={formData.kmcNumber}
+              name="certificateNumber"
+              value={formData.certificateNumber}
               onChange={handleChange}
-              placeholder="KMC Number"
+              placeholder="Certificate Number"
+            />
+          </label>
+
+          <label>
+            Years of Experience:
+            <input
+              type="number"
+              name="yearOfExperience"
+              value={formData.yearOfExperience}
+              onChange={handleChange}
+              min="0"
+              step="0.5"
+              placeholder="Years of Experience"
             />
           </label>
 
@@ -328,39 +384,64 @@ const EditHospitalModal = ({ hospital, onClose, onSave }) => {
             />
           </label>
 
-          <fieldset>
-            <legend>Contact Details</legend>
-            <label>
-              Phone:
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Phone Number"
-              />
-            </label>
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-              />
-            </label>
-          </fieldset>
-
           <label>
-            Staff Details (comma-separated IDs):
+            Skills (comma-separated):
             <input
               type="text"
-              name="staffDetails"
-              value={formData.staffDetails}
+              name="skills"
+              value={formData.skills}
               onChange={handleChange}
-              placeholder="staff001, staff002, ..."
+              placeholder="ICU Care, Pediatric Nursing, etc."
             />
+          </label>
+
+          <label>
+            Self Description:
+            <textarea
+              name="selfDescription"
+              value={formData.selfDescription}
+              onChange={handleChange}
+              placeholder="Brief description about yourself"
+              rows="3"
+            />
+          </label>
+
+          <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+            <label
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <input
+                type="checkbox"
+                name="availableStatus"
+                checked={formData.availableStatus}
+                onChange={handleChange}
+              />
+              Currently Available
+            </label>
+            <label
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <input
+                type="checkbox"
+                name="currentWorkingStatus"
+                checked={formData.currentWorkingStatus}
+                onChange={handleChange}
+              />
+              Currently Working
+            </label>
+          </div>
+
+          <label>
+            Registration Status:
+            <select
+              name="registrationStatus"
+              value={formData.registrationStatus}
+              onChange={handleChange}
+            >
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
           </label>
 
           <div className="modal-footer">
@@ -377,4 +458,4 @@ const EditHospitalModal = ({ hospital, onClose, onSave }) => {
   );
 };
 
-export default EditHospitalModal;
+export default EditNurseModal;

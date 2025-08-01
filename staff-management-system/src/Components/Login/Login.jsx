@@ -69,8 +69,16 @@ const Login = () => {
 
           console.log(response.data);
 
+          localStorage.setItem("userEmail", user.email);
+          localStorage.setItem("userId", user.id);
+
+          if (user.role === "hospital staff") {
+            navigate(`/hospitalAdmin`, { state: { email: user.email } });
+          } else {
+            navigate(`/${user.role}`, { state: { email: user.email } });
+          }
+
           // Pass only email to dashboard (change as needed)
-          navigate(`/${user.role}`, { state: { email: user.email } });
         } else {
           setLoginError(
             response.data.message ||

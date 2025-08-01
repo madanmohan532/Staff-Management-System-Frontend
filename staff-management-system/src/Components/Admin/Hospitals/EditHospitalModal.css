@@ -114,16 +114,16 @@ legend {
 }
 
 .btn-cancel:hover {
-  background-color: #ccc;
+  background-color: #bcbcbc;
 }
 
 .btn-save {
-  background-color: #a06cef;
-  color: white;
+  background-color: #eae7ed;
+  color: rgb(116, 150, 236);
 }
 
 .btn-save:hover {
-  background-color: #7c53e5;
+  background-color: #e2e6e8;
 }
 
 .required {
