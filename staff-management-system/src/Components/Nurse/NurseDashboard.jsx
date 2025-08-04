@@ -65,7 +65,10 @@ const NurseDashboard = ({ nurseId }) => {
           <AttendanceSection nurseId={loggedInUser._id} />
         )}
         {currentTab === "patients" && (
-          <PatientsSection nurseId={loggedInUser._id} />
+          <PatientsSection
+            nurseId={loggedInUser._id}
+            hospitalId={loggedInUser.hospitalId}
+          />
         )}
       </main>
     </div>

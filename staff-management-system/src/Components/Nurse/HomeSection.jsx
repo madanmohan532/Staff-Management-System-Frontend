@@ -136,14 +136,40 @@ const HomeSection = ({ nurseId }) => {
     setLeaveTo("");
   };
 
-  const handleAccept = (reqId) => {
-    // Accept request backend...
-    setRequests((prev) => prev.filter((r) => r.id !== reqId));
+  const handleAccept = (req) => {
+    req.status = "accepted";
+
+    req.nurseId = localStorage.getItem("nurseId");
+    console.log(req);
+
+    axios
+      .put(
+        `http://localhost:9999/staff-service/api/nurse/responseToHospitalRequest`,
+        req
+      )
+      .then((response) => {
+        console.log(response);
+        fetchRequestedDetails();
+      })
+      .catch((error) => console.log(error));
   };
 
-  const handleReject = (reqId) => {
+  const handleReject = (req) => {
+    req.status = "rejected";
+    req.nurseId = localStorage.getItem("nurseId");
+    console.log(req);
+
+    axios
+      .put(
+        `http://localhost:9999/staff-service/api/nurse/rejectToHospitalRequest`,
+        req
+      )
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => console.log(error));
     // Reject request backend...
-    setRequests((prev) => prev.filter((r) => r.id !== reqId));
+    console.log(req);
   };
 
   return (
@@ -209,13 +235,13 @@ const HomeSection = ({ nurseId }) => {
               <div className="request-actions">
                 <button
                   className="accept-btn"
-                  onClick={() => handleAccept(req.id)}
+                  onClick={() => handleAccept(req)}
                 >
                   <FaCheck /> Accept
                 </button>
                 <button
                   className="reject-btn"
-                  onClick={() => handleReject(req.id)}
+                  onClick={() => handleReject(req)}
                 >
                   <FaTimes /> Reject
                 </button>

@@ -14,6 +14,7 @@ import {
 import { MdAppRegistration } from "react-icons/md";
 import axios, { all } from "axios";
 import { useLocation, useNavigate } from "react-router";
+import NurseWorkSchedule from "../AttendanceReport/NurseWorkSchedule";
 
 const AdminDashboard = () => {
   const location = useLocation();
@@ -159,7 +160,7 @@ const AdminDashboard = () => {
       case "nurses":
         return <Nurse />;
       case "attendance":
-        return <AttendanceReport />;
+        return <NurseWorkSchedule />;
       default:
         return (
           <div className="dashboard-welcome">

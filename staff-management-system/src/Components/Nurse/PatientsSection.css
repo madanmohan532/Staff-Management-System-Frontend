@@ -1,0 +1,253 @@
+.patient-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  color: #24292e;
+}
+
+.section-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #4427b2;
+}
+
+.info-text {
+  font-style: italic;
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.patients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.patient-card {
+  background: #f9f9fc;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(89, 66, 233, 0.06);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.3s ease;
+}
+
+.patient-card:focus-within,
+.patient-card:hover {
+  box-shadow: 0 8px 25px rgba(89, 66, 233, 0.18);
+  outline: none;
+}
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patient-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4a4a6a;
+  font-size: 0.95rem;
+}
+
+.patient-info-row svg {
+  color: #5942e9;
+}
+
+.patient-records {
+  background: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.2px solid #ddd;
+  font-size: 1rem;
+  color: #333;
+  white-space: pre-line;
+  min-height: 70px;
+}
+
+.record-display {
+  margin: 0;
+}
+
+.edit-records-btn {
+  background-color: #5a40e2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-records-btn:hover,
+.edit-records-btn:focus {
+  background-color: #3e2bb3;
+  outline: none;
+}
+
+/* Modal Styles */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 999;
+  opacity: 1;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  max-width: 95vw;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18);
+  padding: 24px;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  animation: slideDown 0.3s ease forwards;
+  outline: none;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #756f86;
+  transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+  color: #4427b2;
+  outline: none;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #4427b2;
+  font-weight: 700;
+}
+
+.patient-textarea {
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.3px solid #ddd;
+  margin-top: 16px;
+  min-height: 140px;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.save-records-btn,
+.cancel-edit-btn {
+  padding: 10px 24px;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.save-records-btn {
+  background-color: #4427b2;
+  color: white;
+}
+
+.save-records-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.save-records-btn:not(:disabled):hover,
+.save-records-btn:not(:disabled):focus {
+  background-color: #311f90;
+  outline: none;
+}
+
+.cancel-edit-btn {
+  background-color: #d1d1d6;
+  color: #555;
+}
+
+.cancel-edit-btn:hover,
+.cancel-edit-btn:focus {
+  background-color: #b0aee0;
+  outline: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .patient-section {
+    padding: 16px;
+  }
+
+  .modal-content {
+    width: 95vw;
+  }
+
+  .patient-card {
+    font-size: 0.9rem;
+  }
+}

@@ -384,6 +384,8 @@ const StaffRequests = () => {
   };
 
   const submitRequest = async (detail) => {
+    console.log(detail);
+
     try {
       const response = await axios.put(
         `http://localhost:9999/hospital-service/api/hospital/requestSingleNurse`,
@@ -418,6 +420,9 @@ const StaffRequests = () => {
   };
 
   const handleRequest = (nurse) => {
+    console.log(searchDate + "search date");
+    console.log(startTime);
+
     const newRequest = {
       staffId: nurse._id,
       date: searchDate,
@@ -425,6 +430,9 @@ const StaffRequests = () => {
       to: `${searchDate}T${endTime}:00Z`,
       hospitalId: id,
     };
+
+    console.log(searchDate);
+    console.log(startTime);
 
     submitRequest(newRequest);
     setShowRequestModal(false);
