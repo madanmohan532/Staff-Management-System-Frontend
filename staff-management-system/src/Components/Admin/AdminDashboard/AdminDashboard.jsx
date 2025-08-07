@@ -10,7 +10,10 @@ import {
   FaClipboardList,
   FaHome,
   FaCalendarAlt,
+  FaUserCircle,
 } from "react-icons/fa";
+
+import AdminProfile from "../AdminProfile/AdminProfile"; // Import the new component
 import { MdAppRegistration } from "react-icons/md";
 import axios, { all } from "axios";
 import { useLocation, useNavigate } from "react-router";
@@ -160,7 +163,11 @@ const AdminDashboard = () => {
       case "nurses":
         return <Nurse />;
       case "attendance":
-        return <NurseWorkSchedule />;
+        return <AttendanceReport />;
+      case "profile":
+        return (
+          <AdminProfile adminData={loggedInUser} onUpdate={setLoggedInUser} />
+        );
       default:
         return (
           <div className="dashboard-welcome">
@@ -228,6 +235,12 @@ const AdminDashboard = () => {
             onClick={() => setActiveView("attendance")}
           >
             <FaClipboardList /> Attendance
+          </button>
+          <button
+            className={`nav-btn ${activeView === "profile" ? "active" : ""}`}
+            onClick={() => setActiveView("profile")}
+          >
+            <FaUserCircle /> My Profile
           </button>
         </div>
       </div>

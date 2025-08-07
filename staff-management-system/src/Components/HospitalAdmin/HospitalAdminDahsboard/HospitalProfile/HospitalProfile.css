@@ -1,0 +1,295 @@
+/* Resetting some basic styles for consistency */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  background-color: #f0f2f5; /* A light, clean background */
+}
+
+/* Main container for the entire profile component */
+.hp-profile-container {
+  position: relative;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+/* Header section with the main title */
+.hp-profile-title {
+  text-align: center;
+  color: #1a237e;
+  margin-bottom: 25px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Action icons (edit and logout) at the top right */
+.hp-profile-actions-header {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.hp-edit-icon-container,
+.hp-logout-icon-container {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.hp-edit-icon-container:hover {
+  background-color: #e8eaf6; /* Light hover effect */
+}
+
+.hp-logout-icon-container:hover {
+  background-color: #ffebee; /* Light red hover effect */
+}
+
+.hp-edit-icon,
+.hp-logout-icon {
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+  /* Added cursor property here to ensure it's explicitly set */
+  cursor: pointer;
+}
+
+.hp-edit-icon {
+  color: #1a237e;
+}
+
+.hp-logout-icon {
+  color: #d32f2f;
+}
+
+/* Wrapper for the main profile information form */
+.hp-profile-form-wrapper {
+  background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+/* General form styles */
+.hp-profile-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grid layout for form fields, responsive for different screen sizes */
+.hp-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.hp-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.hp-form-group.full-width {
+  grid-column: 1 / -1; /* Spans across all columns */
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #424242;
+  font-size: 0.9rem;
+}
+
+input {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #1a237e;
+  box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+/* Disabled input styles for a clean, non-editable look */
+input[disabled] {
+  background-color: #f5f5f5;
+  color: #757575;
+  cursor: not-allowed;
+  border: 1px dashed #bdbdbd; /* Dashed border to indicate disabled state */
+}
+
+/* Status messages (success or error) */
+.hp-status-message {
+  text-align: center;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.hp-status-message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.hp-status-message.error {
+  background-color: #fbecec;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+/* Edit Panel styles - a full-height sidebar */
+.hp-edit-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 450px; /* Wider for better field layout */
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: -6px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  padding: 30px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+.hp-edit-panel.open {
+  transform: translateX(0);
+}
+
+.hp-edit-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.hp-edit-panel-header h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #1a237e;
+}
+
+.hp-close-icon {
+  font-size: 1.5rem;
+  color: #777;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.hp-close-icon:hover {
+  color: #d32f2f;
+}
+
+/* Aligning actions at the bottom of the edit form */
+.hp-edit-form .hp-profile-actions {
+  margin-top: 30px;
+  justify-content: center;
+}
+
+/* Button styles - consistent and clear */
+.hp-save-btn,
+.hp-cancel-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px; /* Pill-shaped buttons */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hp-save-btn {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.hp-save-btn:hover {
+  background-color: #388e3c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.hp-cancel-btn {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.hp-cancel-btn:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Certificate image styling */
+.hp-certificate-display {
+  text-align: center;
+}
+
+.hp-certificate-image {
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  margin-top: 15px;
+  object-fit: contain;
+  max-height: 200px;
+  transition: transform 0.3s ease;
+}
+
+.hp-certificate-image:hover {
+  transform: scale(1.03);
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .hp-profile-container {
+    margin: 20px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hp-form-grid {
+    grid-template-columns: 1fr; /* Stack columns on small screens */
+  }
+
+  .hp-profile-title {
+    font-size: 2rem;
+  }
+
+  .hp-edit-panel {
+    width: 100%;
+  }
+
+  .hp-profile-actions-header {
+    top: 10px;
+    right: 10px;
+  }
+}

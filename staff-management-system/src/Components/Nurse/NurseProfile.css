@@ -1,0 +1,342 @@
+/* Refactored CSS to use a BEM-like naming convention for better isolation */
+
+.nurse-profile {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.nurse-profile__title {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.nurse-profile__loading-message {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  padding: 2rem;
+}
+
+.nurse-profile__actions-header {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.nurse-profile__icon-container {
+  background-color: #e0e6ed;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nurse-profile__icon-container:hover {
+  background-color: #cdd5df;
+  transform: translateY(-2px);
+}
+
+.nurse-profile__edit-icon {
+  color: #3498db; /* Blue */
+  font-size: 1.2rem;
+}
+
+.nurse-profile__logout-icon {
+  color: #e74c3c; /* Red */
+  font-size: 1.2rem;
+}
+
+.nurse-profile__form-wrapper {
+  padding-top: 20px;
+}
+
+.nurse-profile__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.nurse-profile__form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.nurse-profile__form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.nurse-profile__form-group label {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.nurse-profile__form-group input[type="text"],
+.nurse-profile__form-group input[type="email"],
+.nurse-profile__form-group input[type="password"],
+.nurse-profile__form-group input[type="number"],
+.nurse-profile__form-group textarea {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #34495e;
+  background-color: #fcfcfc;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nurse-profile__form-group input:disabled,
+.nurse-profile__form-group textarea:disabled {
+  background-color: #f0f2f5;
+  cursor: not-allowed;
+  color: #7f8c8d;
+}
+
+.nurse-profile__form-group input:focus,
+.nurse-profile__form-group textarea:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.nurse-profile__form-group textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.nurse-profile__form-group--full-width {
+  grid-column: 1 / -1;
+}
+
+/* Modal Overlay Styling */
+.nurse-profile__edit-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
+}
+
+.nurse-profile__edit-panel--open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Content Styling */
+.nurse-profile__edit-panel-content {
+  background: #ffffff;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.nurse-profile__edit-panel--open .nurse-profile__edit-panel-content {
+  transform: scale(1);
+}
+
+.nurse-profile__edit-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.nurse-profile__edit-panel-header h3 {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.nurse-profile__close-icon {
+  font-size: 1.5rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.nurse-profile__close-icon:hover {
+  color: #e74c3c;
+}
+
+.nurse-profile__edit-form {
+  overflow-y: visible;
+}
+
+.nurse-profile__profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.nurse-profile__save-btn,
+.nurse-profile__cancel-btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border: none;
+}
+
+.nurse-profile__save-btn {
+  background-color: #2ecc71; /* Green */
+  color: white;
+  border: none;
+}
+
+.nurse-profile__save-btn:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+
+.nurse-profile__cancel-btn {
+  background-color: #bdc3c7; /* Light gray */
+  color: #34495e;
+  border: none;
+}
+
+.nurse-profile__cancel-btn:hover {
+  background-color: #95a5a6;
+  transform: translateY(-2px);
+}
+
+.nurse-profile__status-message {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: center;
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
+
+.nurse-profile__change-password-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.nurse-profile__change-password-btn {
+  background-color: #3498db; /* Blue */
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nurse-profile__change-password-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.nurse-profile__change-password-btn .icon-left {
+  font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nurse-profile {
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .nurse-profile__title {
+    font-size: 1.8rem;
+  }
+
+  .nurse-profile__actions-header {
+    top: 15px;
+    right: 15px;
+    gap: 10px;
+  }
+
+  .nurse-profile__icon-container {
+    width: 35px;
+    height: 35px;
+  }
+
+  .nurse-profile__edit-icon,
+  .nurse-profile__logout-icon,
+  .nurse-profile__close-icon {
+    font-size: 1rem;
+  }
+
+  .nurse-profile__form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .nurse-profile__save-btn,
+  .nurse-profile__cancel-btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .nurse-profile__edit-panel-content {
+    padding: 1.5rem;
+  }
+}
+
+.nurse-profile,
+.nurse-profile > .nurse-profile__form-wrapper {
+  max-width: 100vw;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.nurse-profile__edit-panel--open .nurse-profile__edit-form {
+  padding: 0;
+}

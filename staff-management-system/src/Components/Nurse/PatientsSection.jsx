@@ -1,371 +1,113 @@
-// // // // import React, { useState, useEffect } from "react";
-// // // // import { FaUserInjured, FaSave } from "react-icons/fa";
-// // // // import "./NurseDashboard.css";
-// // // // import axios from "axios";
-
-// // // // const PatientsSection = ({ nurseId }) => {
-// // // //   const [records, setRecords] = useState("");
-// // // //   const [isWorkTime, setIsWorkTime] = useState(true); // Toggle in real project
-
-// // // //   const handleSave = () => {
-// // // //     // Save to backend...
-// // // //     alert("Patient records saved!");
-// // // //     setRecords("");
-// // // //   };
-
-// // // //   return (
-// // // //     <section className="section-card">
-// // // //       <div className="section-header">
-// // // //         <h2>
-// // // //           <FaUserInjured /> Patient Records
-// // // //         </h2>
-// // // //       </div>
-// // // //       {!isWorkTime ? (
-// // // //         <p>You can update patient records only in your scheduled work time.</p>
-// // // //       ) : (
-// // // //         <>
-// // // //           <textarea
-// // // //             className="patients-textarea"
-// // // //             placeholder="Enter patient records..."
-// // // //             value={records}
-// // // //             onChange={(e) => setRecords(e.target.value)}
-// // // //           />
-// // // //           <button className="save-records-btn" onClick={handleSave}>
-// // // //             <FaSave /> Save
-// // // //           </button>
-// // // //         </>
-// // // //       )}
-// // // //     </section>
-// // // //   );
-// // // // };
-
-// // // // export default PatientsSection;
-
-// // // import React, { useState, useEffect } from "react";
-// // // import { FaUserInjured, FaSave, FaEdit } from "react-icons/fa";
+// // // import React, { useState, useEffect, useCallback } from "react";
+// // // import {
+// // //   FaUserInjured,
+// // //   FaEdit,
+// // //   FaHospital,
+// // //   FaCalendarAlt,
+// // //   FaStethoscope,
+// // //   FaSyncAlt, // New icon for refresh button
+// // // } from "react-icons/fa";
 // // // import axios from "axios";
-// // // import "../Nurse/PatientsSection.css";
-
-// // // const PatientsSection = ({ nurseId }) => {
-// // //   const [nurseDetails, setNurseDetails] = useState(null); // includes hospitalId & workingHours
-// // //   const [isWorkingNow, setIsWorkingNow] = useState(false);
-// // //   const [patients, setPatients] = useState([]);
-// // //   const [editingPatientId, setEditingPatientId] = useState(null);
-// // //   const [patientRecordsEdit, setPatientRecordsEdit] = useState({}); // key: patientId, value: editable text
-// // //   const [loading, setLoading] = useState(true);
-
-// // //   // Helper: Check if current date/time is within any of nurse's working hours for hospital
-// // //   const checkIfWorkingNow = (workingHours) => {
-// // //     const now = new Date();
-
-// // //     if (!workingHours || workingHours.length === 0) return false;
-
-// // //     return workingHours.some((wh) => {
-// // //       const workDate = new Date(wh.date);
-// // //       // Check if work date matches today
-// // //       if (
-// // //         workDate.getFullYear() === now.getFullYear() &&
-// // //         workDate.getMonth() === now.getMonth() &&
-// // //         workDate.getDate() === now.getDate()
-// // //       ) {
-// // //         const fromTime = new Date(wh.from);
-// // //         const toTime = new Date(wh.to);
-// // //         // Check if current time is between from and to
-// // //         return now >= fromTime && now <= toTime;
-// // //       }
-// // //       return false;
-// // //     });
-// // //   };
-
-// // //   // Fetch nurse details and determine working status
-// // //   useEffect(() => {
-// // //     const fetchNurseDetails = async () => {
-// // //       try {
-// // //         setLoading(true);
-// // //         const res = await axios.get(
-// // //           `http://localhost:9999/staff-service/api/nurse/${nurseId}`
-// // //         );
-// // //         if (res.status === 200) {
-// // //           setNurseDetails(res.data);
-// // //           const workingNow = checkIfWorkingNow(res.data.workingHours);
-// // //           setIsWorkingNow(true);
-
-// // //           if (workingNow && res.data.hospitalId) {
-// // //             // Fetch patients assigned to this hospital related to nurse
-// // //             await fetchPatients(res.data.hospitalId);
-// // //           } else {
-// // //             setPatients([]);
-// // //           }
-// // //         }
-// // //       } catch (error) {
-// // //         console.error("Failed to fetch nurse details", error);
-// // //       } finally {
-// // //         setLoading(false);
-// // //       }
-// // //     };
-
-// // //     const fetchPatients = async (hospitalId) => {
-// // //       try {
-// // //         const res = await axios.get(
-// // //           `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalId}`
-// // //         );
-// // //         if (res.status === 200) {
-// // //           //   // Assuming backend returns array of patient objects assigned to nurse in that hospital
-// // //           //   const patientsWithHospital = res.data.filter(
-// // //           //     (p) => p.hospitalId === hospitalId
-// // //           //   );
-// // //           //   setPatients(patientsWithHospital);
-// // //           //   // initialize patientRecordsEdit with existing patient notes or empty string
-// // //           //   const initRecords = {};
-// // //           //   patientsWithHospital.forEach((p) => {
-// // //           //     initRecords[p.id] = p.records || "";
-// // //           //   });
-// // //           //   setPatientRecordsEdit(initRecords);
-// // //           // } else {
-// // //           //   setPatients([]);
-// // //           console.log(res.data);
-// // //         }
-// // //       } catch (error) {
-// // //         console.error("Failed to fetch patients", error);
-// // //         setPatients([]);
-// // //       }
-// // //     };
-
-// // //     fetchNurseDetails();
-// // //   }, [nurseId]);
-
-// // //   // Handle Edit click - opens textarea for that patient
-// // //   const handleEditClick = (patientId) => {
-// // //     setEditingPatientId(patientId);
-// // //   };
-
-// // //   // Handle textarea change for patient record
-// // //   const handleRecordChange = (patientId, value) => {
-// // //     setPatientRecordsEdit((prev) => ({
-// // //       ...prev,
-// // //       [patientId]: value,
-// // //     }));
-// // //   };
-
-// // //   // Handle Save - send updated record to backend, then close edit mode
-// // //   const handleSave = async (patientId) => {
-// // //     try {
-// // //       const updatedRecord = patientRecordsEdit[patientId];
-// // //       // Example request body - adjust keys as per your Patient entity/backend API
-// // //       const payload = {
-// // //         id: patientId,
-// // //         records: updatedRecord,
-// // //       };
-// // //       await axios.put(
-// // //         `http://localhost:9999/staff-service/api/nurse/updatePatientDetails`,
-// // //         payload
-// // //       );
-
-// // //       alert("Patient records saved successfully!");
-
-// // //       // Close editing
-// // //       setEditingPatientId(null);
-
-// // //       // Optionally refetch patients to reflect latest data
-// // //       // (or update patients state locally)
-// // //     } catch (error) {
-// // //       console.error("Failed to save patient record:", error);
-// // //       alert("Failed to save records. Please try again.");
-// // //     }
-// // //   };
-
-// // //   if (loading) {
-// // //     return (
-// // //       <section className="section-card">
-// // //         <p>Loading patient records...</p>
-// // //       </section>
-// // //     );
-// // //   }
-
-// // //   if (!nurseDetails) {
-// // //     return (
-// // //       <section className="section-card">
-// // //         <p>Unable to load nurse details. Please try again later.</p>
-// // //       </section>
-// // //     );
-// // //   }
-
-// // //   return (
-// // //     <section className="section-card patient-section">
-// // //       <div className="section-header">
-// // //         <h2>
-// // //           <FaUserInjured /> Patient Records
-// // //         </h2>
-// // //       </div>
-
-// // //       {!isWorkingNow ? (
-// // //         <p className="info-text">
-// // //           You can update patient records only during your scheduled working
-// // //           hours at your hospital.
-// // //         </p>
-// // //       ) : patients.length === 0 ? (
-// // //         <p className="info-text">
-// // //           No patients assigned to your hospital currently.
-// // //         </p>
-// // //       ) : (
-// // //         <div className="patients-list">
-// // //           {patients.map((patient) => (
-// // //             <div key={patient.id} className="patient-card">
-// // //               <div className="patient-info">
-// // //                 <strong>
-// // //                   {patient.firstName} {patient.lastName}
-// // //                 </strong>
-// // //                 <span>Hospital ID: {patient.hospitalId}</span>
-// // //                 {patient.age && <span>Age: {patient.age}</span>}
-// // //                 {patient.diagnosis && (
-// // //                   <span>Diagnosis: {patient.diagnosis}</span>
-// // //                 )}
-// // //               </div>
-
-// // //               <div className="patient-records">
-// // //                 {editingPatientId === patient.id ? (
-// // //                   <>
-// // //                     <textarea
-// // //                       className="patient-textarea"
-// // //                       value={patientRecordsEdit[patient.id]}
-// // //                       onChange={(e) =>
-// // //                         handleRecordChange(patient.id, e.target.value)
-// // //                       }
-// // //                     />
-// // //                     <button
-// // //                       className="save-records-btn"
-// // //                       onClick={() => handleSave(patient.id)}
-// // //                     >
-// // //                       <FaSave /> Save
-// // //                     </button>
-// // //                     <button
-// // //                       className="cancel-edit-btn"
-// // //                       onClick={() => setEditingPatientId(null)}
-// // //                     >
-// // //                       Cancel
-// // //                     </button>
-// // //                   </>
-// // //                 ) : (
-// // //                   <>
-// // //                     <p className="record-display">
-// // //                       {patientRecordsEdit[patient.id]}
-// // //                     </p>
-// // //                     <button
-// // //                       className="edit-records-btn"
-// // //                       onClick={() => handleEditClick(patient.id)}
-// // //                     >
-// // //                       <FaEdit /> Edit
-// // //                     </button>
-// // //                   </>
-// // //                 )}
-// // //               </div>
-// // //             </div>
-// // //           ))}
-// // //         </div>
-// // //       )}
-// // //     </section>
-// // //   );
-// // // };
-
-// // // export default PatientsSection;
-
-// // // import React, { useState, useEffect } from "react";
-// // // import { FaUserInjured, FaSave, FaEdit, FaTimes } from "react-icons/fa";
-// // // import axios from "axios";
-// // // import "../Nurse/PatientsSection.css";
-
-// // // const Modal = ({ children, onClose }) => {
-// // //   // Simple modal using fixed position and backdrop
-// // //   return (
-// // //     <>
-// // //       <div className="modal-overlay" onClick={onClose} />
-// // //       <div className="modal-content">
-// // //         <button className="modal-close-btn" onClick={onClose}>
-// // //           <FaTimes />
-// // //         </button>
-// // //         {children}
-// // //       </div>
-// // //     </>
-// // //   );
-// // // };
+// // // import EditPatientModal from "./EditPatientModal";
+// // // import "./PatientsSection.css";
 
 // // // const PatientsSection = ({ nurseId }) => {
 // // //   const [nurseDetails, setNurseDetails] = useState(null);
-// // //   const [isWorkingNow, setIsWorkingNow] = useState(false);
 // // //   const [patients, setPatients] = useState([]);
 // // //   const [loading, setLoading] = useState(true);
-
 // // //   const [isModalOpen, setIsModalOpen] = useState(false);
-// // //   const [modalPatient, setModalPatient] = useState(null); // patient object in modal
-// // //   const [editRecords, setEditRecords] = useState("");
+// // //   const [modalPatient, setModalPatient] = useState(null);
+// // //   const [currentWorkingHospitalId, setCurrentWorkingHospitalId] =
+// // //     useState(null);
 
-// // //   const checkIfWorkingNow = (workingHours) => {
-// // //     // const now = new Date();
-// // //     // if (!workingHours || workingHours.length === 0) return false;
-// // //     // return workingHours.some((wh) => {
-// // //     //   const workDate = new Date(wh.date);
-// // //     //   if (
-// // //     //     workDate.getFullYear() === now.getFullYear() &&
-// // //     //     workDate.getMonth() === now.getMonth() &&
-// // //     //     workDate.getDate() === now.getDate()
-// // //     //   ) {
-// // //     //     const fromTime = new Date(wh.from);
-// // //     //     const toTime = new Date(wh.to);
-// // //     //     return now >= fromTime && now <= toTime;
-// // //     //   }
-// // //     //   return false;
-// // //     // });
-// // //     return true;
-// // //   };
+// // //   // Helper function to determine the current hospital ID based on working hours
+// // //   const getCurrentHospitalId = useCallback((hours) => {
+// // //     const now = new Date();
+// // //     // Use a more lenient approach: check for any shift on the current day
+// // //     const currentDayShift = hours.find((shift) => {
+// // //       const fromDate = new Date(shift.from);
+// // //       const toDate = new Date(shift.to);
+// // //       const isToday =
+// // //         fromDate.getDate() === now.getDate() &&
+// // //         fromDate.getMonth() === now.getMonth() &&
+// // //         fromDate.getFullYear() === now.getFullYear();
 
+// // //       // Return the hospitalId if a shift is found for the current day
+// // //       if (isToday) {
+// // //         return shift;
+// // //       }
+// // //       return null;
+// // //     });
+
+// // //     return currentDayShift ? currentDayShift.hospitalId : null;
+// // //   }, []);
+
+// // //   // Function to fetch patients for a given hospital ID
+// // //   const fetchPatientsForHospital = useCallback(async (hospitalIdToFetch) => {
+// // //     setLoading(true);
+// // //     try {
+// // //       const res = await axios.get(
+// // //         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalIdToFetch}`
+// // //       );
+// // //       if (res.status === 200) {
+// // //         setPatients(res.data || []);
+// // //       } else {
+// // //         setPatients([]);
+// // //         console.log("No patients found for hospital:", hospitalIdToFetch);
+// // //       }
+// // //     } catch (error) {
+// // //       console.error("Failed to fetch patients:", error);
+// // //       setPatients([]);
+// // //     } finally {
+// // //       setLoading(false);
+// // //     }
+// // //   }, []);
+
+// // //   // Main useEffect to orchestrate data fetching
 // // //   useEffect(() => {
-// // //     const fetchNurseDetails = async () => {
+// // //     const loadAllData = async () => {
+// // //       setLoading(true);
 // // //       try {
-// // //         setLoading(true);
-// // //         const res = await axios.get(
+// // //         // 1. Fetch Nurse Details
+// // //         const nurseRes = await axios.get(
 // // //           `http://localhost:9999/staff-service/api/nurse/${nurseId}`
 // // //         );
-// // //         if (res.status === 200) {
-// // //           setNurseDetails(res.data);
-// // //           const workingNow = checkIfWorkingNow(res.data.workingHours);
-// // //           setIsWorkingNow(workingNow);
-// // //           if (workingNow && res.data.hospitalId) {
-// // //             await fetchPatients(res.data.hospitalId);
-// // //             console.log(res.data.hospitalId);
-// // //           } else {
-// // //             setPatients([]);
-// // //           }
+// // //         setNurseDetails(nurseRes.data);
+
+// // //         // 2. Fetch Nurse's Working Hours
+// // //         const workingHoursRes = await axios.get(
+// // //           `http://localhost:9999/staff-service/api/nurse/getWorkingHours/${nurseId}`
+// // //         );
+// // //         const fetchedWorkingHours = workingHoursRes.data || [];
+
+// // //         // 3. Determine current working hospital ID
+// // //         const activeHospitalId = getCurrentHospitalId(fetchedWorkingHours);
+// // //         setCurrentWorkingHospitalId(activeHospitalId);
+
+// // //         // 4. Fetch Patients if an active hospital is found
+// // //         if (activeHospitalId) {
+// // //           await fetchPatientsForHospital(activeHospitalId);
+// // //         } else {
+// // //           setPatients([]); // No active hospital, so no patients to display
+// // //           setLoading(false);
 // // //         }
 // // //       } catch (error) {
-// // //         console.error("Failed to fetch nurse details", error);
-// // //       } finally {
+// // //         console.error("Failed to load dashboard data:", error);
+// // //         setNurseDetails(null);
+// // //         setPatients([]);
+// // //         setCurrentWorkingHospitalId(null);
 // // //         setLoading(false);
 // // //       }
 // // //     };
 
-// // //     const fetchPatients = async (hospitalId) => {
-// // //       try {
-// // //         const res = await axios.get(
-// // //           `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalId}`
-// // //         );
-// // //         if (res.status === 200) {
-// // //           setPatients(res.data);
-// // //         } else {
-// // //           setPatients([]);
-// // //         }
-// // //       } catch (error) {
-// // //         console.error("Failed to fetch patients", error);
-// // //         setPatients([]);
-// // //       }
-// // //     };
+// // //     if (nurseId) {
+// // //       loadAllData();
+// // //     }
+// // //   }, [nurseId, getCurrentHospitalId, fetchPatientsForHospital]);
 
-// // //     fetchNurseDetails();
-// // //   }, []);
-
-// // //   // Open modal and initialize records
+// // //   // Open modal for selected patient
 // // //   const openEditModal = (patient) => {
 // // //     setModalPatient(patient);
-// // //     setEditRecords(patient.medicalInformation?.primaryReason || "");
 // // //     setIsModalOpen(true);
 // // //   };
 
@@ -373,125 +115,159 @@
 // // //   const closeModal = () => {
 // // //     setIsModalOpen(false);
 // // //     setModalPatient(null);
-// // //     setEditRecords("");
 // // //   };
 
-// // //   // Save updated patient record
-// // //   const savePatientRecord = async () => {
-// // //     if (!modalPatient) return;
+// // //   // Save updated patient from modal and refresh data
+// // //   const savePatientRecord = async (updatedPatient) => {
 // // //     try {
-// // //       // Prepare payload; extend this object with other editable fields as needed
-// // //       const updatedPatient = {
-// // //         ...modalPatient,
-// // //         medicalInformation: {
-// // //           ...modalPatient.medicalInformation,
-// // //           primaryReason: editRecords,
-// // //         },
-// // //       };
-// // //       await axios.put(
+// // //       setLoading(true);
+// // //       const response = await axios.put(
 // // //         `http://localhost:9999/staff-service/api/nurse/updatePatientDetails`,
 // // //         updatedPatient
 // // //       );
 
-// // //       // Update patients list locally for immediate UI update
-// // //       setPatients((prev) =>
-// // //         prev.map((p) => (p.id === modalPatient.id ? updatedPatient : p))
-// // //       );
-
-// // //       alert("Patient records updated successfully!");
-// // //       closeModal();
+// // //       if (response.status === 200) {
+// // //         if (currentWorkingHospitalId) {
+// // //           await fetchPatientsForHospital(currentWorkingHospitalId);
+// // //         }
+// // //         alert("Patient records updated successfully!");
+// // //       } else {
+// // //         alert("Failed to update records. Please try again.");
+// // //       }
 // // //     } catch (error) {
 // // //       console.error("Failed to update patient record", error);
 // // //       alert("Failed to update records. Please try again.");
+// // //     } finally {
+// // //       setLoading(false);
+// // //       closeModal();
 // // //     }
 // // //   };
 
-// // //   if (loading)
+// // //   // Render loading state
+// // //   if (loading) {
 // // //     return (
 // // //       <section className="section-card">
-// // //         <p>Loading patient records...</p>
+// // //         <p className="loading-message">
+// // //           <FaSyncAlt className="spin" /> Checking for active shift and loading
+// // //           patients...
+// // //         </p>
 // // //       </section>
 // // //     );
+// // //   }
 
-// // //   if (!nurseDetails)
+// // //   // Render state if nurse details couldn't be loaded
+// // //   if (!nurseDetails) {
 // // //     return (
 // // //       <section className="section-card">
-// // //         <p>Unable to load nurse details.</p>
+// // //         <p className="error-message">
+// // //           Unable to load nurse details. Please try again later.
+// // //         </p>
 // // //       </section>
 // // //     );
+// // //   }
 
+// // //   // Render state if nurse is not currently working a shift
+// // //   if (!currentWorkingHospitalId) {
+// // //     return (
+// // //       <section className="section-card patient-section">
+// // //         <p className="info-text">
+// // //           You are not currently assigned to a hospital for today. Patient
+// // //           details will appear here when you have an active shift.
+// // //         </p>
+// // //       </section>
+// // //     );
+// // //   }
+
+// // //   // Render the patient list
 // // //   return (
-// // //     <section className="section-card patient-section">
+// // //     <section className="section-card patient-section" aria-live="polite">
 // // //       <div className="section-header">
 // // //         <h2>
-// // //           <FaUserInjured /> Patient Records
+// // //           <FaUserInjured aria-hidden="true" /> Patient Records
 // // //         </h2>
+// // //         {currentWorkingHospitalId && (
+// // //           <p className="current-hospital-info">
+// // //             Displaying patients for Hospital ID:{" "}
+// // //             <strong>{currentWorkingHospitalId}</strong>
+// // //           </p>
+// // //         )}
 // // //       </div>
 
-// // //       {!isWorkingNow ? (
+// // //       {patients.length === 0 ? (
 // // //         <p className="info-text">
-// // //           You can update patient records only during your scheduled working
-// // //           hours at your hospital.
-// // //         </p>
-// // //       ) : patients.length === 0 ? (
-// // //         <p className="info-text">
-// // //           No patients assigned to your hospital currently.
+// // //           No patients are assigned to your current hospital shift.
 // // //         </p>
 // // //       ) : (
-// // //         <div className="patients-list">
+// // //         <div className="patients-list" role="list">
 // // //           {patients.map((patient) => (
-// // //             <div key={patient.id} className="patient-card">
-// // //               <div className="patient-info">
+// // //             <article
+// // //               key={patient._id || patient.id}
+// // //               className="patient-card"
+// // //               role="listitem"
+// // //               tabIndex={0}
+// // //               aria-label={`${patient.firstName} ${patient.lastName} patient card`}
+// // //             >
+// // //               <div className="patient-header">
 // // //                 <strong>
 // // //                   {patient.firstName} {patient.lastName}
 // // //                 </strong>
-// // //                 <span>Hospital ID: {patient.hospitalId}</span>
-// // //                 {patient.age && <span>Age: {patient.age}</span>}
-// // //                 {patient.diagnosis && (
-// // //                   <span>Diagnosis: {patient.diagnosis}</span>
-// // //                 )}
-// // //               </div>
-
-// // //               <div className="patient-records">
-// // //                 <p className="record-display">
-// // //                   {patient.medicalInformation?.primaryReason ||
-// // //                     "No records yet."}
-// // //                 </p>
 // // //                 <button
 // // //                   className="edit-records-btn"
+// // //                   aria-label={`Edit records for ${patient.firstName} ${patient.lastName}`}
 // // //                   onClick={() => openEditModal(patient)}
 // // //                 >
 // // //                   <FaEdit /> Edit
 // // //                 </button>
 // // //               </div>
-// // //             </div>
+
+// // //               <div className="patient-info-row">
+// // //                 <FaHospital /> <span>Hospital ID: {patient.hospitalId}</span>
+// // //               </div>
+// // //               {patient.age && (
+// // //                 <div className="patient-info-row">
+// // //                   <FaUserInjured /> <span>Age: {patient.age}</span>
+// // //                 </div>
+// // //               )}
+// // //               {patient.diagnosis && (
+// // //                 <div className="patient-info-row">
+// // //                   <FaStethoscope /> <span>Diagnosis: {patient.diagnosis}</span>
+// // //                 </div>
+// // //               )}
+// // //               <div className="patient-info-row">
+// // //                 <FaCalendarAlt />{" "}
+// // //                 <span>
+// // //                   Admit Date: {new Date(patient.admitDate).toLocaleDateString()}
+// // //                 </span>
+// // //               </div>
+// // //               <div className="patient-info-row">
+// // //                 <FaCalendarAlt />{" "}
+// // //                 <span>
+// // //                   Expected Discharge:{" "}
+// // //                   {new Date(patient.expectedDischargeDate).toLocaleDateString()}
+// // //                 </span>
+// // //               </div>
+
+// // //               <div className="patient-records">
+// // //                 <p
+// // //                   className="record-display"
+// // //                   aria-label="Primary medical reason"
+// // //                 >
+// // //                   {patient.medicalInformation?.primaryReason ||
+// // //                     "No primary medical reason provided."}
+// // //                 </p>
+// // //               </div>
+// // //             </article>
 // // //           ))}
 // // //         </div>
 // // //       )}
 
-// // //       {isModalOpen && (
-// // //         <Modal onClose={closeModal}>
-// // //           <h3>Update Patient Record</h3>
-// // //           <p>
-// // //             <strong>
-// // //               {modalPatient.firstName} {modalPatient.lastName}
-// // //             </strong>
-// // //           </p>
-// // //           <textarea
-// // //             className="patient-textarea"
-// // //             rows={6}
-// // //             value={editRecords}
-// // //             onChange={(e) => setEditRecords(e.target.value)}
-// // //           />
-// // //           <div className="modal-buttons">
-// // //             <button className="save-records-btn" onClick={savePatientRecord}>
-// // //               <FaSave /> Update
-// // //             </button>
-// // //             <button className="cancel-edit-btn" onClick={closeModal}>
-// // //               Cancel
-// // //             </button>
-// // //           </div>
-// // //         </Modal>
+// // //       {isModalOpen && modalPatient && (
+// // //         <EditPatientModal
+// // //           patient={modalPatient}
+// // //           nurseId={nurseId}
+// // //           onClose={closeModal}
+// // //           onSave={savePatientRecord}
+// // //         />
 // // //       )}
 // // //     </section>
 // // //   );
@@ -499,169 +275,270 @@
 
 // // // export default PatientsSection;
 
-// // import React, { useState, useEffect } from "react";
-// // import { FaUserInjured, FaSave, FaEdit, FaTimes } from "react-icons/fa";
+// // import React, { useState, useEffect, useCallback } from "react";
+// // import {
+// //   FaUserInjured,
+// //   FaEdit,
+// //   FaHospital,
+// //   FaCalendarAlt,
+// //   FaStethoscope,
+// //   FaSyncAlt, // New icon for refresh button
+// // } from "react-icons/fa";
 // // import axios from "axios";
-// // import "./PatientsSection.css"; // Make sure this path matches your project structure
-
-// // const Modal = ({ children, onClose }) => {
-// //   return (
-// //     <>
-// //       <div className="modal-overlay" onClick={onClose} />
-// //       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-// //         <button
-// //           className="modal-close-btn"
-// //           onClick={onClose}
-// //           aria-label="Close modal"
-// //         >
-// //           <FaTimes />
-// //         </button>
-// //         {children}
-// //       </div>
-// //     </>
-// //   );
-// // };
+// // import EditPatientModal from "./EditPatientModal";
+// // import "./PatientsSection.css";
 
 // // const PatientsSection = ({ nurseId }) => {
 // //   const [nurseDetails, setNurseDetails] = useState(null);
 // //   const [patients, setPatients] = useState([]);
 // //   const [loading, setLoading] = useState(true);
-// //   const [loggedInUser, setLoggedInUser] = useState({});
-
-// //   // Modal and edit states
 // //   const [isModalOpen, setIsModalOpen] = useState(false);
 // //   const [modalPatient, setModalPatient] = useState(null);
-// //   const [editRecords, setEditRecords] = useState("");
+// //   const [currentWorkingHospitalId, setCurrentWorkingHospitalId] =
+// //     useState(null);
 
-// //   const fetchNurseDetails = async () => {
+// //   // Helper to get IST offset string for consistent parsing
+// //   const IST_OFFSET = "+05:30";
+
+// //   // Function to prepare date string for consistent parsing as IST
+// //   const prepareDateStringForIST = useCallback((timeString) => {
+// //     if (!timeString) return "";
+// //     // If the string doesn't contain a timezone offset (Z, +HH:MM, or -HH:MM)
+// //     // and it includes a time component 'T', append IST offset.
+// //     if (
+// //       !timeString.includes("Z") &&
+// //       !timeString.includes("+") &&
+// //       !timeString.includes("-") &&
+// //       timeString.includes("T")
+// //     ) {
+// //       return timeString + IST_OFFSET;
+// //     }
+// //     // If it's just a date like "YYYY-MM-DD", append a default time and IST offset
+// //     if (
+// //       !timeString.includes("Z") &&
+// //       !timeString.includes("+") &&
+// //       !timeString.includes("-") &&
+// //       !timeString.includes("T")
+// //     ) {
+// //       return timeString + "T00:00:00" + IST_OFFSET;
+// //     }
+// //     return timeString; // Return as-is if it already has an offset or is not a date-time string
+// //   }, []); // useCallback to memoize the function
+
+// //   // Helper function to determine the current hospital ID based on working hours
+// //   const getCurrentHospitalId = useCallback(
+// //     (hours) => {
+// //       const now = new Date();
+// //       // Use a more lenient approach: check for any shift on the current day
+// //       const currentDayShift = hours.find((shift) => {
+// //         // Ensure the shift's 'from' date is parsed consistently as IST
+// //         const fromDate = new Date(prepareDateStringForIST(shift.from));
+// //         const toDate = new Date(prepareDateStringForIST(shift.to));
+// //         console.log(shift.from, shift.to);
+
+// //         console.log(fromDate, toDate);
+
+// //         // Check if the shift's date matches today's date (IST)
+// //         const isShiftToday =
+// //           fromDate.getDate() === now.getDate() &&
+// //           fromDate.getMonth() === now.getMonth() &&
+// //           fromDate.getFullYear() === now.getFullYear();
+
+// //         // Additionally, check if the current time falls within the shift's duration
+// //         // This makes the "active" check more precise for the current moment.
+// //         const isCurrentlyActive = now >= fromDate && now <= toDate;
+
+// //         // Return the hospitalId if a shift is found for the current day AND it's currently active
+// //         if (isShiftToday && isCurrentlyActive) {
+// //           return shift;
+// //         }
+// //         return null;
+// //       });
+
+// //       console.log(currentDayShift);
+
+// //       return currentDayShift ? currentDayShift.hospitalId : null;
+// //     },
+// //     [prepareDateStringForIST]
+// //   ); // Dependency on prepareDateStringForIST
+
+// //   // Function to fetch patients for a given hospital ID
+// //   const fetchPatientsForHospital = useCallback(async (hospitalIdToFetch) => {
+// //     setLoading(true);
 // //     try {
-// //       setLoading(true);
 // //       const res = await axios.get(
-// //         `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+// //         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalIdToFetch}`
 // //       );
 // //       if (res.status === 200) {
-// //         setNurseDetails(res.data);
+// //         setPatients(res.data || []);
 // //         console.log(res.data);
+// //       } else {
+// //         setPatients([]);
+// //         console.log("No patients found for hospital:", hospitalIdToFetch);
 // //       }
 // //     } catch (error) {
-// //       console.error("Failed to fetch nurse details", error);
+// //       console.error("Failed to fetch patients:", error);
+// //       setPatients([]);
 // //     } finally {
 // //       setLoading(false);
 // //     }
-// //   };
+// //   }, []); // No external dependencies needed for this specific function
 
+// //   // Main useEffect to orchestrate data fetching
 // //   useEffect(() => {
-// //     fetchNurseDetails();
-// //   }, [nurseId]);
+// //     const loadAllData = async () => {
+// //       setLoading(true);
+// //       try {
+// //         // 1. Fetch Nurse Details
+// //         const nurseRes = await axios.get(
+// //           `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+// //         );
+// //         setNurseDetails(nurseRes.data);
 
-// //   useEffect(() => {
-// //     axios
-// //       .get(
-// //         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/hosp001`
-// //       )
-// //       .then((res) => {
-// //         console.log(res.data);
+// //         // 2. Fetch Nurse's Working Hours (which includes workSchedule)
+// //         // Assuming getWorkingHours also returns workSchedule or you need to fetch workSchedule separately
+// //         // For robustness, let's fetch workSchedule explicitly here if it's separate from workingHours API
+// //         const workScheduleRes = await axios.get(
+// //           `http://localhost:9999/staff-service/api/nurse/getWorkSchedule/${nurseId}`
+// //         );
+// //         const fetchedWorkSchedule = workScheduleRes.data || [];
 
-// //         setPatients(res.data);
-// //       })
-// //       .catch((err) => console.log(err));
-// //   }, [nurseDetails]);
+// //         // 3. Determine current working hospital ID from workSchedule
+// //         // We use workSchedule here as it contains 'accepted'/'confirmed' status
+// //         const activeHospitalId = getCurrentHospitalId(fetchedWorkSchedule);
+// //         console.log(activeHospitalId);
 
+// //         setCurrentWorkingHospitalId(activeHospitalId);
+
+// //         // 4. Fetch Patients if an active hospital is found
+// //         if (activeHospitalId) {
+// //           await fetchPatientsForHospital(activeHospitalId);
+// //         } else {
+// //           setPatients([]); // No active hospital, so no patients to display
+// //           setLoading(false); // Stop loading if no active hospital
+// //         }
+// //       } catch (error) {
+// //         console.error("Failed to load PatientsSection data:", error);
+// //         setNurseDetails(null);
+// //         setPatients([]);
+// //         setCurrentWorkingHospitalId(null);
+// //         setLoading(false);
+// //       }
+// //     };
+
+// //     if (nurseId) {
+// //       loadAllData();
+// //     }
+// //   }, [nurseId, getCurrentHospitalId, fetchPatientsForHospital]); // Dependencies for useEffect
+
+// //   // Open modal for selected patient
 // //   const openEditModal = (patient) => {
 // //     setModalPatient(patient);
-// //     setEditRecords(patient.medicalInformation?.primaryReason || "");
 // //     setIsModalOpen(true);
 // //   };
 
+// //   // Close modal
 // //   const closeModal = () => {
 // //     setIsModalOpen(false);
 // //     setModalPatient(null);
-// //     setEditRecords("");
 // //   };
 
-// //   const savePatientRecord = async () => {
-// //     if (!modalPatient) return;
+// //   // Save updated patient from modal and refresh data
+// //   const savePatientRecord = async (updatedPatient) => {
 // //     try {
-// //       const updatedPatient = {
-// //         ...modalPatient,
-// //         medicalInformation: {
-// //           ...modalPatient.medicalInformation,
-// //           primaryReason: editRecords.trim(),
-// //         },
-// //       };
-
-// //       await axios.put(
+// //       setLoading(true);
+// //       const response = await axios.put(
 // //         `http://localhost:9999/staff-service/api/nurse/updatePatientDetails`,
 // //         updatedPatient
 // //       );
 
-// //       setPatients((prev) =>
-// //         prev.map((p) => (p.id === modalPatient.id ? updatedPatient : p))
-// //       );
-
-// //       alert("Patient records updated successfully!");
-// //       closeModal();
+// //       if (response.status === 200) {
+// //         if (currentWorkingHospitalId) {
+// //           // Re-fetch patients for the current hospital to reflect changes
+// //           await fetchPatientsForHospital(currentWorkingHospitalId);
+// //         }
+// //         alert("Patient records updated successfully!");
+// //       } else {
+// //         alert("Failed to update records. Please try again.");
+// //       }
 // //     } catch (error) {
 // //       console.error("Failed to update patient record", error);
 // //       alert("Failed to update records. Please try again.");
+// //     } finally {
+// //       setLoading(false);
+// //       closeModal();
 // //     }
 // //   };
 
-// //   if (loading)
+// //   // Render loading state
+// //   if (loading) {
 // //     return (
 // //       <section className="section-card">
-// //         <p>Loading patient records...</p>
+// //         <p className="loading-message">
+// //           <FaSyncAlt className="spin" /> Checking for active shift and loading
+// //           patients...
+// //         </p>
 // //       </section>
 // //     );
+// //   }
 
-// //   if (!nurseDetails)
+// //   // Render state if nurse details couldn't be loaded
+// //   if (!nurseDetails) {
 // //     return (
 // //       <section className="section-card">
-// //         <p>Unable to load nurse details.</p>
+// //         <p className="error-message">
+// //           Unable to load nurse details. Please try again later.
+// //         </p>
 // //       </section>
 // //     );
+// //   }
 
+// //   // Render state if nurse is not currently working a shift
+// //   if (!currentWorkingHospitalId) {
+// //     return (
+// //       <section className="section-card patient-section">
+// //         <p className="info-text">
+// //           You are not currently assigned to a hospital for today, or your shift
+// //           is not active. Patient details will appear here when you have an
+// //           active shift.
+// //         </p>
+// //       </section>
+// //     );
+// //   }
+
+// //   // Render the patient list
 // //   return (
 // //     <section className="section-card patient-section" aria-live="polite">
 // //       <div className="section-header">
 // //         <h2>
 // //           <FaUserInjured aria-hidden="true" /> Patient Records
 // //         </h2>
+// //         {currentWorkingHospitalId && (
+// //           <p className="current-hospital-info">
+// //             Displaying patients for Hospital ID:{" "}
+// //             <strong>{currentWorkingHospitalId}</strong>
+// //           </p>
+// //         )}
 // //       </div>
 
 // //       {patients.length === 0 ? (
 // //         <p className="info-text">
-// //           No patients assigned to your hospital currently.
+// //           No patients are assigned to your current hospital shift.
 // //         </p>
 // //       ) : (
 // //         <div className="patients-list" role="list">
 // //           {patients.map((patient) => (
 // //             <article
-// //               key={patient.id}
+// //               key={patient._id || patient.id}
 // //               className="patient-card"
 // //               role="listitem"
 // //               tabIndex={0}
 // //               aria-label={`${patient.firstName} ${patient.lastName} patient card`}
 // //             >
-// //               <div className="patient-info">
+// //               <div className="patient-header">
 // //                 <strong>
 // //                   {patient.firstName} {patient.lastName}
 // //                 </strong>
-// //                 <span>Hospital ID: {patient.hospitalId}</span>
-// //                 {patient.age && <span>Age: {patient.age}</span>}
-// //                 {patient.diagnosis && (
-// //                   <span>Diagnosis: {patient.diagnosis}</span>
-// //                 )}
-// //               </div>
-
-// //               <div className="patient-records">
-// //                 <p
-// //                   className="record-display"
-// //                   aria-label="Primary medical reason"
-// //                 >
-// //                   {patient.medicalInformation?.primaryReason ||
-// //                     "No records yet."}
-// //                 </p>
 // //                 <button
 // //                   className="edit-records-btn"
 // //                   aria-label={`Edit records for ${patient.firstName} ${patient.lastName}`}
@@ -670,40 +547,60 @@
 // //                   <FaEdit /> Edit
 // //                 </button>
 // //               </div>
+
+// //               <div className="patient-info-row">
+// //                 <FaHospital /> <span>Hospital ID: {patient.hospitalId}</span>
+// //               </div>
+// //               {patient.age && (
+// //                 <div className="patient-info-row">
+// //                   <FaUserInjured /> <span>Age: {patient.age}</span>
+// //                 </div>
+// //               )}
+// //               {patient.diagnosis && (
+// //                 <div className="patient-info-row">
+// //                   <FaStethoscope /> <span>Diagnosis: {patient.diagnosis}</span>
+// //                 </div>
+// //               )}
+// //               <div className="patient-info-row">
+// //                 <FaCalendarAlt />{" "}
+// //                 <span>
+// //                   Admit Date:{" "}
+// //                   {new Date(
+// //                     prepareDateStringForIST(patient.admitDate)
+// //                   ).toLocaleDateString()}
+// //                 </span>
+// //               </div>
+// //               <div className="patient-info-row">
+// //                 <FaCalendarAlt />{" "}
+// //                 <span>
+// //                   Expected Discharge:{" "}
+// //                   {new Date(
+// //                     prepareDateStringForIST(patient.expectedDischargeDate)
+// //                   ).toLocaleDateString()}
+// //                 </span>
+// //               </div>
+
+// //               <div className="patient-records">
+// //                 <p
+// //                   className="record-display"
+// //                   aria-label="Primary medical reason"
+// //                 >
+// //                   {patient.medicalInformation?.primaryReason ||
+// //                     "No primary medical reason provided."}
+// //                 </p>
+// //               </div>
 // //             </article>
 // //           ))}
 // //         </div>
 // //       )}
 
-// //       {isModalOpen && (
-// //         <Modal onClose={closeModal}>
-// //           <h3>Update Patient Record</h3>
-// //           <p>
-// //             <strong>
-// //               {modalPatient.firstName} {modalPatient.lastName}
-// //             </strong>
-// //           </p>
-// //           <textarea
-// //             className="patient-textarea"
-// //             rows={6}
-// //             aria-label="Edit primary medical reason"
-// //             value={editRecords}
-// //             onChange={(e) => setEditRecords(e.target.value)}
-// //             autoFocus
-// //           />
-// //           <div className="modal-buttons">
-// //             <button
-// //               className="save-records-btn"
-// //               onClick={savePatientRecord}
-// //               disabled={editRecords.trim() === ""}
-// //             >
-// //               <FaSave /> Update
-// //             </button>
-// //             <button className="cancel-edit-btn" onClick={closeModal}>
-// //               Cancel
-// //             </button>
-// //           </div>
-// //         </Modal>
+// //       {isModalOpen && modalPatient && (
+// //         <EditPatientModal
+// //           patient={modalPatient}
+// //           nurseId={nurseId}
+// //           onClose={closeModal}
+// //           onSave={savePatientRecord}
+// //         />
 // //       )}
 // //     </section>
 // //   );
@@ -711,161 +608,245 @@
 
 // // export default PatientsSection;
 
-// import React, { useState, useEffect } from "react";
-// import EditPatientModal from "./EditPatientModal";
+// import React, { useState, useEffect, useCallback } from "react";
 // import {
 //   FaUserInjured,
-//   FaSave,
 //   FaEdit,
-//   FaTimes,
 //   FaHospital,
 //   FaCalendarAlt,
 //   FaStethoscope,
+//   FaSyncAlt, // New icon for refresh button
 // } from "react-icons/fa";
 // import axios from "axios";
+// import EditPatientModal from "./EditPatientModal";
 // import "./PatientsSection.css";
 
 // const PatientsSection = ({ nurseId }) => {
 //   const [nurseDetails, setNurseDetails] = useState(null);
 //   const [patients, setPatients] = useState([]);
 //   const [loading, setLoading] = useState(true);
-
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [modalPatient, setModalPatient] = useState(null);
-//   const [editRecords, setEditRecords] = useState("");
+//   const [currentWorkingHospitalId, setCurrentWorkingHospitalId] =
+//     useState(null);
 
-//   // useEffect(() => {
-//   //   const fetchNurseDetails = async () => {
-//   //     try {
-//   //       setLoading(true);
-//   //       const res = await axios.get(
-//   //         `http://localhost:9999/staff-service/api/nurse/${nurseId}`
-//   //       );
-//   //       if (res.status === 200) {
-//   //         setNurseDetails(res.data);
-//   //         if (res.data.hospitalId) {
-//   //           await fetchPatients(res.data.hospitalId);
-//   //         } else {
-//   //           setPatients([]);
-//   //         }
-//   //       }
-//   //     } catch (error) {
-//   //       console.error("Failed to fetch nurse details", error);
-//   //     } finally {
-//   //       setLoading(false);
-//   //     }
-//   //   };
+//   const formatTime = (timeString) => {
+//     if (!timeString) return "";
 
-//   //   const fetchPatients = async (hospitalId) => {
-//   //     try {
-//   //       const res = await axios.get(
-//   //         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/hosp001`
-//   //       );
-//   //       if (res.status === 200) {
-//   //         setPatients(res.data);
-//   //       } else {
-//   //         setPatients([]);
-//   //       }
-//   //     } catch (error) {
-//   //       console.error("Failed to fetch patients", error);
-//   //       setPatients([]);
-//   //     }
-//   //   };
+//     const formattedDate = new Date(timeString).toLocaleTimeString("en-IN", {
+//       timeZone: "Asia/Kolkata",
+//       hour: "2-digit",
+//       minute: "2-digit",
+//       hour12: false,
+//     });
+//     console.log(formattedDate);
 
-//   //   fetchNurseDetails();
-//   // }, [nurseId]);
+//     return formattedDate;
+//   };
 
-//   const fetchNurseDetails = async () => {
+//   // Removed IST_OFFSET and prepareDateStringForIST as per your request.
+//   // Dates will now be parsed directly by new Date().
+
+//   // Helper function to determine the current hospital ID based on working hours
+//   const getCurrentHospitalId = useCallback((hours) => {
+//     const now = new Date(); // Current time in user's local timezone
+//     // Use a more lenient approach: check for any shift on the current day
+//     const currentDayShift = hours.find((shift) => {
+//       // Parse 'from' and 'to' strings directly.
+//       // They will be interpreted as local times based on the user's browser timezone.
+//       const fromDate = new Date(shift.from);
+//       // fromDate.setHours(fromDate.getHours(), fromDate.getMinutes()); // Adjust for IST if needed
+//       const toDate = new Date(shift.to);
+//       // toDate.setHours(toDate.getHours() - 5, toDate.getMinutes() - 30); // Adjust for IST if needed
+
+//       console.log(fromDate, toDate);
+
+//       console.log("now" + now);
+
+//       // Check if the shift's date matches today's date (in the user's local timezone)
+//       const isShiftToday =
+//         fromDate.getDate() === now.getDate() &&
+//         fromDate.getMonth() === now.getMonth() &&
+//         fromDate.getFullYear() === now.getFullYear();
+
+//       // Additionally, check if the current time falls within the shift's duration
+//       // This makes the "active" check more precise for the current moment.
+//       const isCurrentlyActive = now >= fromDate && now <= toDate;
+
+//       // Return the hospitalId if a shift is found for the current day AND it's currently active
+//       if (isShiftToday && isCurrentlyActive) {
+//         return shift;
+//       }
+//       return null;
+//     });
+
+//     console.log(currentDayShift);
+
+//     return currentDayShift ? currentDayShift.hospitalId : null;
+//   }, []); // No dependencies related to date string manipulation needed here anymore
+
+//   // Function to fetch patients for a given hospital ID
+//   const fetchPatientsForHospital = useCallback(async (hospitalIdToFetch) => {
+//     setLoading(true);
 //     try {
-//       setLoading(true);
 //       const res = await axios.get(
-//         `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+//         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalIdToFetch}`
 //       );
 //       if (res.status === 200) {
-//         setNurseDetails(res.data);
-//         console.log(res.data);
+//         setPatients(res.data || []);
+//       } else {
+//         setPatients([]);
+//         console.log("No patients found for hospital:", hospitalIdToFetch);
 //       }
 //     } catch (error) {
-//       console.error("Failed to fetch nurse details", error);
+//       console.error("Failed to fetch patients:", error);
+//       setPatients([]);
 //     } finally {
 //       setLoading(false);
 //     }
-//   };
+//   }, []);
 
+//   // Main useEffect to orchestrate data fetching
 //   useEffect(() => {
-//     fetchNurseDetails();
-//   }, [nurseId]);
+//     const loadAllData = async () => {
+//       setLoading(true);
+//       try {
+//         // 1. Fetch Nurse Details
+//         const nurseRes = await axios.get(
+//           `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+//         );
+//         setNurseDetails(nurseRes.data);
 
-//   useEffect(() => {
-//     axios
-//       .get(
-//         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/hosp001`
-//       )
-//       .then((res) => {
-//         console.log(res.data);
+//         // 2. Fetch Nurse's Work Schedule (as it contains 'accepted'/'confirmed' status)
+//         const workScheduleRes = await axios.get(
+//           `http://localhost:9999/staff-service/api/nurse/getWorkSchedule/${nurseId}`
+//         );
+//         const fetchedWorkSchedule = workScheduleRes.data || [];
 
-//         setPatients(res.data);
-//       })
-//       .catch((err) => console.log(err));
-//   }, [nurseDetails]);
+//         // 3. Determine current working hospital ID from workSchedule
+//         const activeHospitalId = getCurrentHospitalId(fetchedWorkSchedule);
+//         setCurrentWorkingHospitalId(activeHospitalId);
 
+//         // 4. Fetch Patients if an active hospital is found
+//         if (activeHospitalId) {
+//           await fetchPatientsForHospital(activeHospitalId);
+//         } else {
+//           setPatients([]); // No active hospital, so no patients to display
+//           setLoading(false); // Stop loading if no active hospital
+//         }
+//       } catch (error) {
+//         console.error("Failed to load PatientsSection data:", error);
+//         setNurseDetails(null);
+//         setPatients([]);
+//         setCurrentWorkingHospitalId(null);
+//         setLoading(false);
+//       }
+//     };
+
+//     if (nurseId) {
+//       loadAllData();
+//     }
+//   }, [nurseId, getCurrentHospitalId, fetchPatientsForHospital]);
+
+//   // Open modal for selected patient
 //   const openEditModal = (patient) => {
 //     setModalPatient(patient);
 //     setIsModalOpen(true);
 //   };
 
+//   // Close modal
 //   const closeModal = () => {
 //     setIsModalOpen(false);
 //     setModalPatient(null);
 //   };
 
+//   // Save updated patient from modal and refresh data
 //   const savePatientRecord = async (updatedPatient) => {
 //     try {
-//       await axios.put(
+//       setLoading(true);
+//       const response = await axios.put(
 //         `http://localhost:9999/staff-service/api/nurse/updatePatientDetails`,
 //         updatedPatient
 //       );
-//       setPatients((prev) =>
-//         prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
-//       );
-//       alert("Patient records updated successfully!");
-//       closeModal();
+
+//       if (response.status === 200) {
+//         if (currentWorkingHospitalId) {
+//           // Re-fetch patients for the current hospital to reflect changes
+//           await fetchPatientsForHospital(currentWorkingHospitalId);
+//         }
+//         alert("Patient records updated successfully!");
+//       } else {
+//         alert("Failed to update records. Please try again.");
+//       }
 //     } catch (error) {
 //       console.error("Failed to update patient record", error);
 //       alert("Failed to update records. Please try again.");
+//     } finally {
+//       setLoading(false);
+//       closeModal();
 //     }
 //   };
 
-//   if (loading)
+//   // Render loading state
+//   if (loading) {
 //     return (
 //       <section className="section-card">
-//         <p>Loading patient records...</p>
+//         <p className="loading-message">
+//           <FaSyncAlt className="spin" /> Checking for active shift and loading
+//           patients...
+//         </p>
 //       </section>
 //     );
-//   if (!nurseDetails)
-//     return (
-//       <section className="section-card">
-//         <p>Unable to load nurse details.</p>
-//       </section>
-//     );
+//   }
 
+//   // Render state if nurse details couldn't be loaded
+//   if (!nurseDetails) {
+//     return (
+//       <section className="section-card">
+//         <p className="error-message">
+//           Unable to load nurse details. Please try again later.
+//         </p>
+//       </section>
+//     );
+//   }
+
+//   // Render state if nurse is not currently working a shift
+//   if (!currentWorkingHospitalId) {
+//     return (
+//       <section className="section-card patient-section">
+//         <p className="info-text">
+//           You are not currently assigned to a hospital for today, or your shift
+//           is not active. Patient details will appear here when you have an
+//           active shift.
+//         </p>
+//       </section>
+//     );
+//   }
+
+//   // Render the patient list
 //   return (
 //     <section className="section-card patient-section" aria-live="polite">
 //       <div className="section-header">
 //         <h2>
 //           <FaUserInjured aria-hidden="true" /> Patient Records
 //         </h2>
+//         {currentWorkingHospitalId && (
+//           <p className="current-hospital-info">
+//             Displaying patients for Hospital ID:{" "}
+//             <strong>{currentWorkingHospitalId}</strong>
+//           </p>
+//         )}
 //       </div>
 
 //       {patients.length === 0 ? (
 //         <p className="info-text">
-//           No patients assigned to your hospital currently.
+//           No patients are assigned to your current hospital shift.
 //         </p>
 //       ) : (
 //         <div className="patients-list" role="list">
 //           {patients.map((patient) => (
 //             <article
-//               key={patient.id}
+//               key={patient._id || patient.id}
 //               className="patient-card"
 //               role="listitem"
 //               tabIndex={0}
@@ -898,11 +879,17 @@
 //                 </div>
 //               )}
 //               <div className="patient-info-row">
-//                 <FaCalendarAlt /> <span>Admit Date: {patient.admitDate}</span>
+//                 <FaCalendarAlt />{" "}
+//                 <span>
+//                   Admit Date: {new Date(patient.admitDate).toLocaleDateString()}
+//                 </span>
 //               </div>
 //               <div className="patient-info-row">
 //                 <FaCalendarAlt />{" "}
-//                 <span>Expected Discharge: {patient.expectedDischargeDate}</span>
+//                 <span>
+//                   Expected Discharge:{" "}
+//                   {new Date(patient.expectedDischargeDate).toLocaleDateString()}
+//                 </span>
 //               </div>
 
 //               <div className="patient-records">
@@ -911,7 +898,7 @@
 //                   aria-label="Primary medical reason"
 //                 >
 //                   {patient.medicalInformation?.primaryReason ||
-//                     "No records yet."}
+//                     "No primary medical reason provided."}
 //                 </p>
 //               </div>
 //             </article>
@@ -919,35 +906,13 @@
 //         </div>
 //       )}
 
-//       {isModalOpen && (
-//         <EditPatientModal onClose={closeModal}>
-//           <h3>Update Patient Record</h3>
-//           <p>
-//             <strong>
-//               {modalPatient.firstName} {modalPatient.lastName}
-//             </strong>
-//           </p>
-//           <textarea
-//             className="patient-textarea"
-//             rows={6}
-//             aria-label="Edit primary medical reason"
-//             value={editRecords}
-//             onChange={(e) => setEditRecords(e.target.value)}
-//             autoFocus
-//           />
-//           <div className="modal-buttons">
-//             <button
-//               className="save-records-btn"
-//               onClick={savePatientRecord}
-//               disabled={editRecords.trim() === ""}
-//             >
-//               <FaSave /> Update
-//             </button>
-//             <button className="cancel-edit-btn" onClick={closeModal}>
-//               Cancel
-//             </button>
-//           </div>
-//         </EditPatientModal>
+//       {isModalOpen && modalPatient && (
+//         <EditPatientModal
+//           patient={modalPatient}
+//           nurseId={nurseId}
+//           onClose={closeModal}
+//           onSave={savePatientRecord}
+//         />
 //       )}
 //     </section>
 //   );
@@ -955,155 +920,464 @@
 
 // export default PatientsSection;
 
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect, useCallback } from "react";
+// import {
+//   FaUserInjured,
+//   FaEdit,
+//   FaHospital,
+//   FaCalendarAlt,
+//   FaStethoscope,
+//   FaSyncAlt,
+// } from "react-icons/fa";
+// import axios from "axios";
+// import EditPatientModal from "./EditPatientModal";
+// import "./PatientsSection.css";
+
+// const PatientsSection = ({ nurseId }) => {
+//   const [nurseDetails, setNurseDetails] = useState(null);
+//   const [patients, setPatients] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [modalPatient, setModalPatient] = useState(null);
+//   const [currentWorkingHospitalId, setCurrentWorkingHospitalId] =
+//     useState(null);
+
+//   // Helper function to format time (unchanged)
+//   const formatTime = (timeString) => {
+//     if (!timeString) return "";
+//     const formattedDate = new Date(timeString).toLocaleTimeString("en-IN", {
+//       timeZone: "Asia/Kolkata",
+//       hour: "2-digit",
+//       minute: "2-digit",
+//       hour12: false,
+//     });
+//     return formattedDate;
+//   };
+
+//   // REVISED: Helper function to find the currently active hospital ID
+//   const getCurrentHospitalId = useCallback((workSchedule) => {
+//     const now = new Date();
+//     // Use the stored ISO format directly for comparison
+//     const activeShift = workSchedule.find((shift) => {
+//       const fromDate = new Date(shift.from);
+//       const toDate = new Date(shift.to);
+
+//       // Check if the current time falls precisely within the shift's duration
+//       return now >= fromDate && now <= toDate;
+//     });
+
+//     return activeShift ? activeShift.hospitalId : null;
+//   }, []);
+
+//   // Function to fetch patients for a given hospital ID
+//   const fetchPatientsForHospital = useCallback(async (hospitalIdToFetch) => {
+//     setLoading(true);
+//     try {
+//       const res = await axios.get(
+//         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalIdToFetch}`
+//       );
+//       if (res.status === 200 && res.data) {
+//         setPatients(res.data);
+//       } else {
+//         setPatients([]);
+//       }
+//     } catch (error) {
+//       console.error("Failed to fetch patients:", error);
+//       setPatients([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   // Main useEffect to orchestrate data fetching
+//   useEffect(() => {
+//     const loadAllData = async () => {
+//       setLoading(true);
+//       try {
+//         const nurseRes = await axios.get(
+//           `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+//         );
+//         setNurseDetails(nurseRes.data);
+
+//         const workScheduleRes = await axios.get(
+//           `http://localhost:9999/staff-service/api/nurse/getWorkSchedule/${nurseId}`
+//         );
+//         const fetchedWorkSchedule = workScheduleRes.data || [];
+
+//         // Determine current working hospital ID from workSchedule
+//         const activeHospitalId = getCurrentHospitalId(fetchedWorkSchedule);
+//         setCurrentWorkingHospitalId(activeHospitalId);
+
+//         // CONDITIONAL FETCHING: Only fetch patients if an active hospital is found
+//         if (activeHospitalId) {
+//           await fetchPatientsForHospital(activeHospitalId);
+//         } else {
+//           setPatients([]);
+//           setLoading(false);
+//         }
+//       } catch (error) {
+//         console.error("Failed to load PatientsSection data:", error);
+//         setNurseDetails(null);
+//         setPatients([]);
+//         setCurrentWorkingHospitalId(null);
+//         setLoading(false);
+//       }
+//     };
+
+//     if (nurseId) {
+//       loadAllData();
+//     }
+//   }, [nurseId, getCurrentHospitalId, fetchPatientsForHospital]);
+
+//   // Open modal for selected patient (unchanged)
+//   const openEditModal = (patient) => {
+//     setModalPatient(patient);
+//     setIsModalOpen(true);
+//   };
+
+//   // Close modal (unchanged)
+//   const closeModal = () => {
+//     setIsModalOpen(false);
+//     setModalPatient(null);
+//   };
+
+//   // Save updated patient from modal and refresh data (unchanged)
+//   const savePatientRecord = async (updatedPatient) => {
+//     try {
+//       setLoading(true);
+//       const response = await axios.put(
+//         `http://localhost:9999/staff-service/api/nurse/updatePatientDetails`,
+//         updatedPatient
+//       );
+
+//       if (response.status === 200) {
+//         if (currentWorkingHospitalId) {
+//           await fetchPatientsForHospital(currentWorkingHospitalId);
+//         }
+//         alert("Patient records updated successfully!");
+//       } else {
+//         alert("Failed to update records. Please try again.");
+//       }
+//     } catch (error) {
+//       console.error("Failed to update patient record", error);
+//       alert("Failed to update records. Please try again.");
+//     } finally {
+//       setLoading(false);
+//       closeModal();
+//     }
+//   };
+
+//   // RENDER LOGIC (mostly unchanged, with new messaging)
+//   if (loading) {
+//     return (
+//       <section className="section-card">
+//         <p className="loading-message">
+//           <FaSyncAlt className="spin" /> Checking for active shift and loading
+//           patients...
+//         </p>
+//       </section>
+//     );
+//   }
+
+//   if (!nurseDetails) {
+//     return (
+//       <section className="section-card">
+//         <p className="error-message">
+//           Unable to load nurse details. Please try again later.
+//         </p>
+//       </section>
+//     );
+//   }
+
+//   // The key change in the render logic is this check
+//   if (!currentWorkingHospitalId) {
+//     return (
+//       <section className="section-card patient-section">
+//         <p className="info-text">
+//           You are not currently assigned to a hospital for a shift. Patient
+//           details will appear here when you have an active shift.
+//         </p>
+//       </section>
+//     );
+//   }
+
+//   return (
+//     <section className="section-card patient-section" aria-live="polite">
+//       <div className="section-header">
+//         <h2>
+//           <FaUserInjured aria-hidden="true" /> Patient Records
+//         </h2>
+//         {currentWorkingHospitalId && (
+//           <p className="current-hospital-info">
+//             Displaying patients for Hospital ID:{" "}
+//             <strong>{currentWorkingHospitalId}</strong>
+//           </p>
+//         )}
+//       </div>
+
+//       {patients.length === 0 ? (
+//         <p className="info-text">
+//           No patients are assigned to your current hospital shift.
+//         </p>
+//       ) : (
+//         <div className="patients-list" role="list">
+//           {patients.map((patient) => (
+//             <article
+//               key={patient._id || patient.id}
+//               className="patient-card"
+//               role="listitem"
+//               tabIndex={0}
+//               aria-label={`${patient.firstName} ${patient.lastName} patient card`}
+//             >
+//               <div className="patient-header">
+//                 <strong>
+//                   {patient.firstName} {patient.lastName}
+//                 </strong>
+//                 <button
+//                   className="edit-records-btn"
+//                   aria-label={`Edit records for ${patient.firstName} ${patient.lastName}`}
+//                   onClick={() => openEditModal(patient)}
+//                 >
+//                   <FaEdit /> Edit
+//                 </button>
+//               </div>
+
+//               <div className="patient-info-row">
+//                 <FaHospital /> <span>Hospital ID: {patient.hospitalId}</span>
+//               </div>
+//               {patient.age && (
+//                 <div className="patient-info-row">
+//                   <FaUserInjured /> <span>Age: {patient.age}</span>
+//                 </div>
+//               )}
+//               {patient.diagnosis && (
+//                 <div className="patient-info-row">
+//                   <FaStethoscope /> <span>Diagnosis: {patient.diagnosis}</span>
+//                 </div>
+//               )}
+//               <div className="patient-info-row">
+//                 <FaCalendarAlt />{" "}
+//                 <span>
+//                   Admit Date: {new Date(patient.admitDate).toLocaleDateString()}
+//                 </span>
+//               </div>
+//               <div className="patient-info-row">
+//                 <FaCalendarAlt />{" "}
+//                 <span>
+//                   Expected Discharge:{" "}
+//                   {new Date(patient.expectedDischargeDate).toLocaleDateString()}
+//                 </span>
+//               </div>
+
+//               <div className="patient-records">
+//                 <p
+//                   className="record-display"
+//                   aria-label="Primary medical reason"
+//                 >
+//                   {patient.medicalInformation?.primaryReason ||
+//                     "No primary medical reason provided."}
+//                 </p>
+//               </div>
+//             </article>
+//           ))}
+//         </div>
+//       )}
+
+//       {isModalOpen && modalPatient && (
+//         <EditPatientModal
+//           patient={modalPatient}
+//           nurseId={nurseId}
+//           onClose={closeModal}
+//           onSave={savePatientRecord}
+//         />
+//       )}
+//     </section>
+//   );
+// };
+
+// export default PatientsSection;
+
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FaUserInjured,
   FaEdit,
   FaHospital,
   FaCalendarAlt,
   FaStethoscope,
+  FaSyncAlt,
 } from "react-icons/fa";
 import axios from "axios";
 import EditPatientModal from "./EditPatientModal";
 import "./PatientsSection.css";
 
-const PatientsSection = ({ nurseId, hospitalId }) => {
+const PatientsSection = ({ nurseId }) => {
   const [nurseDetails, setNurseDetails] = useState(null);
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalPatient, setModalPatient] = useState(null);
+  const [currentWorkingHospitalId, setCurrentWorkingHospitalId] =
+    useState(null);
 
-  // Fetch nurse & patients on mount or whenever nurseId changes
-  // useEffect(() => {
-  //   const fetchNurseDetails = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await axios.get(
-  //         `http://localhost:9999/staff-service/api/nurse/${nurseId}`
-  //       );
-  //       if (res.status === 200) {
-  //         setNurseDetails(res.data);
-  //         if (res.data.hospitalId) {
-  //           await fetchPatients(res.data.hospitalId);
-  //         } else {
-  //           setPatients([]);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to fetch nurse details", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  // Helper function to format time (unchanged)
+  const formatTime = (timeString) => {
+    if (!timeString) return "";
+    const formattedDate = new Date(timeString).toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    return formattedDate;
+  };
 
-  //   const fetchPatients = async (hospitalId) => {
-  //     try {
-  //       const res = await axios.get(
-  //         `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/hosp001`
-  //       );
-  //       if (res.status === 200) {
-  //         setPatients(res.data);
-  //       } else {
-  //         setPatients([]);
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to fetch patients", error);
-  //       setPatients([]);
-  //     }
-  //   };
+  // REVISED: Helper function to find the currently active and accepted hospital ID
+  const getCurrentHospitalId = useCallback((workSchedule) => {
+    const now = new Date();
+    // Find a shift that is both currently active AND has a status of 'accepted'.
+    const activeShift = workSchedule.find((shift) => {
+      const fromDate = new Date(shift.from);
+      const toDate = new Date(shift.to);
 
-  //   fetchNurseDetails();
-  // }, [nurseId]);
+      // Check if the current time falls within the shift's duration
+      // AND if the shift's status is "accepted"
+      return now >= fromDate && now <= toDate && shift.status === "accepted";
+    });
 
-  const fetchNurseDetails = async () => {
+    return activeShift ? activeShift.hospitalId : null;
+  }, []);
+
+  // Function to fetch patients for a given hospital ID
+  const fetchPatientsForHospital = useCallback(async (hospitalIdToFetch) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await axios.get(
-        `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+        `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalIdToFetch}`
       );
-      if (res.status === 200) {
-        setNurseDetails(res.data);
-        console.log(res.data);
+      if (res.status === 200 && res.data) {
+        setPatients(res.data);
+      } else {
+        setPatients([]);
       }
     } catch (error) {
-      console.error("Failed to fetch nurse details", error);
+      console.error("Failed to fetch patients:", error);
+      setPatients([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  // Main useEffect to orchestrate data fetching
   useEffect(() => {
-    fetchNurseDetails();
-  }, [nurseId]);
+    const loadAllData = async () => {
+      setLoading(true);
+      try {
+        const nurseRes = await axios.get(
+          `http://localhost:9999/staff-service/api/nurse/${nurseId}`
+        );
+        setNurseDetails(nurseRes.data);
 
-  useEffect(() => {
-    axios
-      .get(
-        `http://localhost:9999/staff-service/api/nurse/getPatientDetailsByHospitalId/${hospitalId}`
-      )
-      .then((res) => {
-        console.log(res.data);
+        const workScheduleRes = await axios.get(
+          `http://localhost:9999/staff-service/api/nurse/getWorkSchedule/${nurseId}`
+        );
+        const fetchedWorkSchedule = workScheduleRes.data || [];
 
-        setPatients(res.data);
-      })
-      .catch((err) => console.log(err));
-  }, [nurseDetails]);
+        // Determine current working hospital ID from workSchedule
+        const activeHospitalId = getCurrentHospitalId(fetchedWorkSchedule);
+        setCurrentWorkingHospitalId(activeHospitalId);
 
-  // Open modal for selected patient
+        // CONDITIONAL FETCHING: Only fetch patients if an active and accepted hospital is found
+        if (activeHospitalId) {
+          await fetchPatientsForHospital(activeHospitalId);
+        } else {
+          setPatients([]);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Failed to load PatientsSection data:", error);
+        setNurseDetails(null);
+        setPatients([]);
+        setCurrentWorkingHospitalId(null);
+        setLoading(false);
+      }
+    };
+
+    if (nurseId) {
+      loadAllData();
+    }
+  }, [nurseId, getCurrentHospitalId, fetchPatientsForHospital]);
+
+  // Open modal for selected patient (unchanged)
   const openEditModal = (patient) => {
     setModalPatient(patient);
     setIsModalOpen(true);
   };
 
-  // Close modal
+  // Close modal (unchanged)
   const closeModal = () => {
     setIsModalOpen(false);
     setModalPatient(null);
   };
 
-  // Save updated patient from modal
+  // Save updated patient from modal and refresh data (unchanged)
   const savePatientRecord = async (updatedPatient) => {
     try {
-      await axios.put(
+      setLoading(true);
+      const response = await axios.put(
         `http://localhost:9999/staff-service/api/nurse/updatePatientDetails`,
         updatedPatient
       );
 
-      setPatients((prev) =>
-        prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
-      );
-
-      alert("Patient records updated successfully!");
-      closeModal();
+      if (response.status === 200) {
+        if (currentWorkingHospitalId) {
+          await fetchPatientsForHospital(currentWorkingHospitalId);
+        }
+        alert("Patient records updated successfully!");
+      } else {
+        alert("Failed to update records. Please try again.");
+      }
     } catch (error) {
       console.error("Failed to update patient record", error);
       alert("Failed to update records. Please try again.");
+    } finally {
+      setLoading(false);
+      closeModal();
     }
   };
 
-  if (loading)
+  // RENDER LOGIC (mostly unchanged, with new messaging)
+  if (loading) {
     return (
       <section className="section-card">
-        <p>Loading patient records...</p>
+        <p className="loading-message">
+          <FaSyncAlt className="spin" /> Checking for active shift and loading
+          patients...
+        </p>
       </section>
     );
+  }
 
-  if (!nurseDetails)
+  if (!nurseDetails) {
     return (
       <section className="section-card">
-        <p>Unable to load nurse details.</p>
+        <p className="error-message">
+          Unable to load nurse details. Please try again later.
+        </p>
       </section>
     );
+  }
 
-  const handleUpdatedPatient = (updatedPatient) => {
-    setPatients((prev) =>
-      prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
+  // The key change in the render logic is this check
+  if (!currentWorkingHospitalId) {
+    return (
+      <section className="section-card patient-section">
+        <p className="info-text">
+          You are not currently assigned to an active, accepted shift. Patient
+          details will appear here when you have one.
+        </p>
+      </section>
     );
-    alert("Patient records updated successfully!");
-    closeModal();
-  };
+  }
 
   return (
     <section className="section-card patient-section" aria-live="polite">
@@ -1111,17 +1385,23 @@ const PatientsSection = ({ nurseId, hospitalId }) => {
         <h2>
           <FaUserInjured aria-hidden="true" /> Patient Records
         </h2>
+        {currentWorkingHospitalId && (
+          <p className="current-hospital-info">
+            Displaying patients for Hospital ID:{" "}
+            <strong>{currentWorkingHospitalId}</strong>
+          </p>
+        )}
       </div>
 
       {patients.length === 0 ? (
         <p className="info-text">
-          No patients assigned to your hospital currently.
+          No patients are assigned to your current hospital shift.
         </p>
       ) : (
         <div className="patients-list" role="list">
           {patients.map((patient) => (
             <article
-              key={patient.id}
+              key={patient._id || patient.id}
               className="patient-card"
               role="listitem"
               tabIndex={0}
@@ -1154,11 +1434,17 @@ const PatientsSection = ({ nurseId, hospitalId }) => {
                 </div>
               )}
               <div className="patient-info-row">
-                <FaCalendarAlt /> <span>Admit Date: {patient.admitDate}</span>
+                <FaCalendarAlt />{" "}
+                <span>
+                  Admit Date: {new Date(patient.admitDate).toLocaleDateString()}
+                </span>
               </div>
               <div className="patient-info-row">
                 <FaCalendarAlt />{" "}
-                <span>Expected Discharge: {patient.expectedDischargeDate}</span>
+                <span>
+                  Expected Discharge:{" "}
+                  {new Date(patient.expectedDischargeDate).toLocaleDateString()}
+                </span>
               </div>
 
               <div className="patient-records">
@@ -1167,7 +1453,7 @@ const PatientsSection = ({ nurseId, hospitalId }) => {
                   aria-label="Primary medical reason"
                 >
                   {patient.medicalInformation?.primaryReason ||
-                    "No records yet."}
+                    "No primary medical reason provided."}
                 </p>
               </div>
             </article>
@@ -1180,7 +1466,7 @@ const PatientsSection = ({ nurseId, hospitalId }) => {
           patient={modalPatient}
           nurseId={nurseId}
           onClose={closeModal}
-          onSave={handleUpdatedPatient}
+          onSave={savePatientRecord}
         />
       )}
     </section>

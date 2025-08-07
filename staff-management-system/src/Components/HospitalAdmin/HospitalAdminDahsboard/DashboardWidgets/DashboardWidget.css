@@ -1,0 +1,75 @@
+.dashboard-widgets-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.widget-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  min-width: 300px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.widget-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.widget-icon {
+  color: #3f51b5; /* A primary brand color */
+}
+
+.widget-info {
+  text-align: right;
+}
+
+.widget-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.widget-info span {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Specific colors for different widgets */
+.patients-widget .widget-icon {
+  color: #f44336; /* Red */
+}
+
+.nurses-widget .widget-icon {
+  color: #4caf50; /* Green */
+}
+
+.loading,
+.error-message {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #777;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

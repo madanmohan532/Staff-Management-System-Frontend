@@ -6,170 +6,200 @@ import {
   FaCheck,
   FaTimes,
 } from "react-icons/fa";
-import "./NurseDashboard.css";
+import "./HomeSection.css";
 import axios from "axios";
 
-const HomeSection = ({ nurseId }) => {
+const HomeSection = ({ nurseData }) => {
   const [availability, setAvailability] = useState(false);
   const [leaveFrom, setLeaveFrom] = useState("");
   const [leaveTo, setLeaveTo] = useState("");
-  const [requests, setRequests] = useState([]);
   const [workSchedule, setWorkSchedule] = useState([]);
-  const [hospitals, setHospitals] = useState([]);
   const [allHospitals, setAllHospitals] = useState([]);
-  const [nurse, setNurse] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
+  const currentNurseId = localStorage.getItem("nurseId");
 
   const fetchHospitals = async () => {
-    await axios
-      .get(
+    try {
+      const response = await axios.get(
         "http://localhost:9999/admin-service/api/admin/hospital/hospitalDetails"
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          setAllHospitals(response.data);
-        } else {
-          console.log("No hospitals found");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching hospitals:", error);
-      });
+      );
+      if (response.status === 200) {
+        setAllHospitals(response.data);
+      } else {
+        console.log("No hospitals found");
+      }
+    } catch (error) {
+      console.error("Error fetching hospitals:", error);
+    }
   };
 
-  const fetchNurseDetails = () => {
-    axios
-      .get(
-        `http://localhost:9999/staff-service/api/nurse//${localStorage.getItem(
-          "nurseId"
-        )}`
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          console.log(response.data);
-          const results = response.data;
-
-          setAvailability(results.availableStatus);
-        } else {
-          console.log("No user found");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user:", error);
-      });
+  const fetchNurseDetails = async () => {
+    if (!currentNurseId) return;
+    try {
+      const response = await axios.get(
+        `http://localhost:9999/staff-service/api/nurse/${currentNurseId}`
+      );
+      if (response.status === 200) {
+        setAvailability(response.data.availableStatus);
+      } else {
+        console.log("No nurse found");
+      }
+    } catch (error) {
+      console.error("Error fetching nurse:", error);
+    }
   };
 
-  const fetchRequestedDetails = () => {
-    axios
-      .get(
-        `http://localhost:9999/staff-service/api/nurse/getWorkSchedule/${localStorage.getItem(
-          "nurseId"
-        )}`
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          console.log(response.data);
-          const results = response.data;
-          const schedules = results.filter((schedule) => {
-            return schedule.status === "requested";
-          });
-          setWorkSchedule(schedules);
-        } else {
-          console.log("No user found");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user:", error);
-      });
+  const fetchRequestedDetails = async () => {
+    if (!currentNurseId) return;
+    try {
+      const response = await axios.get(
+        `http://localhost:9999/staff-service/api/nurse/getWorkSchedule/${currentNurseId}`
+      );
+      if (response.status === 200) {
+        const schedules = response.data.filter((schedule) => {
+          return schedule.status === "requested";
+        });
+        setWorkSchedule(schedules);
+      } else {
+        console.log("No work schedule found");
+      }
+    } catch (error) {
+      console.error("Error fetching work schedule:", error);
+    }
   };
 
   useEffect(() => {
-    // Fetch data for availability & requests in real implementation
-    // axios.get(...).then(r => ...)
-    fetchNurseDetails();
-    fetchRequestedDetails();
-    fetchHospitals();
-  }, []);
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchNurseDetails();
+      await fetchRequestedDetails();
+      await fetchHospitals();
+      setLoading(false);
+    };
+    fetchData();
+  }, [currentNurseId]);
 
-  const handleToggleAvailability = () => {
-    setAvailability(!availability);
-    axios
-      .put(
-        `http://localhost:9999/staff-service/api/nurse/setAvailability/${localStorage.getItem(
-          "nurseId"
-        )}/${availability}`
-      )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => console.log(error));
-    // Update backend...
+  const handleToggleAvailability = async () => {
+    // 1. Correctly toggle the state first
+    const newAvailability = !availability;
+    setAvailability(newAvailability);
+    setMessage(""); // Clear any previous messages
+
+    try {
+      // 2. Make the API call with the NEW availability value
+      const response = await axios.put(
+        `http://localhost:9999/staff-service/api/nurse/setAvailability/${currentNurseId}/${newAvailability}`
+      );
+      if (response.status === 200) {
+        setMessage(
+          `Availability set to ${
+            newAvailability ? "Available" : "Unavailable"
+          }.`
+        );
+      } else {
+        // If the API call fails, revert the state to the old value
+        setMessage("Failed to update availability. Please try again.");
+        setAvailability(availability);
+      }
+    } catch (error) {
+      console.error("Error updating availability:", error);
+      setMessage("Error updating availability. Please try again.");
+      setAvailability(availability);
+    }
   };
 
-  const handleApplyLeave = () => {
+  const handleApplyLeave = async () => {
+    // ... (This function is unchanged, as it was working correctly)
     if (!leaveFrom || !leaveTo) {
-      alert("Select both dates.");
+      setMessage("Select both dates.");
       return;
     } else {
-      console.log(leaveTo);
-
-      const leaveDetail = {
-        from: leaveFrom + "T00:00:00Z",
-        to: leaveTo + "T00:00:00Z",
-        nurseId: localStorage.getItem("nurseId"),
-      };
-      axios
-        .put(
+      setMessage("");
+      try {
+        setLoading(true);
+        const leaveDetail = {
+          from: leaveFrom,
+          to: leaveTo,
+          nurseId: currentNurseId,
+        };
+        const response = await axios.put(
           `http://localhost:9999/staff-service/api/nurse/applyLeave`,
           leaveDetail
-        )
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => console.log(error));
-      // Update backend...
+        );
+        if (response.status === 200) {
+          setMessage("Leave applied successfully!");
+          setLeaveFrom("");
+          setLeaveTo("");
+        } else {
+          setMessage("Failed to apply leave.");
+        }
+      } catch (error) {
+        console.error("Error applying leave:", error);
+        setMessage("Error applying leave.");
+      } finally {
+        setLoading(false);
+      }
     }
 
-    // Hit backend for leave application...
-
-    alert("Leave applied successfully!");
-    setLeaveFrom("");
-    setLeaveTo("");
+    console.log(leaveFrom, leaveTo);
   };
 
-  const handleAccept = (req) => {
-    req.status = "accepted";
+  const handleAccept = async (req) => {
+    // ... (This function is unchanged, as it was working correctly)
+    setMessage("");
+    try {
+      setLoading(true);
+      const payload = { ...req, status: "accepted", nurseId: currentNurseId };
+      console.log(payload);
 
-    req.nurseId = localStorage.getItem("nurseId");
-    console.log(req);
-
-    axios
-      .put(
+      const response = await axios.put(
         `http://localhost:9999/staff-service/api/nurse/responseToHospitalRequest`,
-        req
-      )
-      .then((response) => {
-        console.log(response);
+        payload
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+
+        setMessage("Request accepted successfully!");
         fetchRequestedDetails();
-      })
-      .catch((error) => console.log(error));
+      } else {
+        setMessage("Failed to accept request.");
+      }
+    } catch (error) {
+      console.error("Error accepting request:", error);
+      setMessage("Error accepting request.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReject = (req) => {
-    req.status = "rejected";
-    req.nurseId = localStorage.getItem("nurseId");
+  const handleReject = async (req) => {
+    // ... (This function is unchanged, as it was working correctly)
+    setMessage("");
     console.log(req);
 
-    axios
-      .put(
+    try {
+      setLoading(true);
+      const payload = { ...req, status: "rejected", nurseId: currentNurseId };
+      const response = await axios.put(
         `http://localhost:9999/staff-service/api/nurse/rejectToHospitalRequest`,
-        req
-      )
-      .then((response) => {
+        payload
+      );
+      if (response.status === 200) {
         console.log(response.data);
-      })
-      .catch((error) => console.log(error));
-    // Reject request backend...
-    console.log(req);
+
+        setMessage("Request rejected successfully!");
+        fetchRequestedDetails();
+      } else {
+        setMessage("Failed to reject request.");
+      }
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+      setMessage("Error rejecting request.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

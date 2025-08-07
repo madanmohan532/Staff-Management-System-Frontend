@@ -1,0 +1,330 @@
+/* AttendanceSection.css */
+
+.nurse-attendance-calendar {
+  font-family: "Inter", sans-serif; /* Using Inter font */
+  max-width: 900px; /* Increased max-width for better spacing */
+  margin: 20px auto;
+  padding: 25px; /* Increased padding */
+  background: #ffffff;
+  border-radius: 12px; /* More rounded corners */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Stronger, softer shadow */
+  color: #333;
+  overflow: hidden; /* Ensure no overflow issues */
+}
+
+.nurse-header {
+  margin-bottom: 25px; /* More space */
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.nurse-header h2 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 2.2rem; /* Larger title */
+  font-weight: 700; /* Bolder */
+  letter-spacing: -0.5px;
+}
+
+.nurse-meta {
+  display: block;
+  color: #7f8c8d;
+  font-size: 0.95rem; /* Slightly larger */
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px; /* More padding */
+  border-radius: 20px; /* More rounded, pill-like */
+  font-size: 0.85rem; /* Slightly larger */
+  font-weight: 600;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Increased gap */
+  margin-bottom: 30px; /* More space below controls */
+}
+
+.calendar-controls select {
+  padding: 10px 18px; /* More padding */
+  border: 1px solid #dcdcdc; /* Lighter border */
+  border-radius: 8px; /* More rounded */
+  background: #fdfdfd;
+  font-size: 1.05rem; /* Slightly larger font */
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smoother transition */
+  -webkit-appearance: none; /* Remove default arrow */
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23555%22%20d%3D%22M287%20197.3l-11.4-11.4c-3.7-3.7-9.8-3.7-13.5%200L146.2%20272.2%2030.3%20156.3c-3.7-3.7-9.8-3.7-13.5%200L5.4%20167.7c-3.7%203.7-3.7%209.8%200%2013.5l133.8%20133.8c3.7%203.7%209.8%203.7%2013.5%200l133.8-133.8c3.7-3.7%203.7-9.8%200-13.5z%22%2F%3E%3C%2Fsvg%3E"); /* Custom arrow */
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 10px;
+}
+
+.calendar-controls select:hover {
+  border-color: #a0a0a0;
+}
+
+.calendar-controls select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.25);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px; /* Slightly increased gap for better separation */
+}
+
+.day-header {
+  text-align: center;
+  font-weight: 700; /* Bolder */
+  padding: 12px 5px; /* More padding */
+  color: #2c3e50;
+  background: #eef2f5; /* Slightly darker light gray */
+  border-radius: 6px; /* More rounded */
+  font-size: 0.95rem;
+  text-transform: uppercase; /* Uppercase day names */
+  letter-spacing: 0.5px;
+}
+
+.calendar-day {
+  min-height: 120px; /* Increased height for more content */
+  padding: 10px; /* More padding */
+  border: 1px solid #e8e8e8; /* Lighter border */
+  border-radius: 8px; /* More rounded */
+  position: relative;
+  background: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Increased gap between items */
+  font-size: 0.88rem;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out; /* Smooth hover effect */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03); /* Subtle shadow */
+}
+
+.calendar-day:hover:not(.empty) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.calendar-day.empty {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.calendar-day.today {
+  border: 2px solid #3498db; /* Blue for today */
+  background-color: #eaf6ff; /* Very light blue for today's background */
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2); /* Shadow for today */
+}
+
+.calendar-day.worked {
+  background-color: #e6ffe6; /* Very light green */
+}
+
+.calendar-day.scheduled {
+  background-color: #fff8e1; /* Very light yellow */
+}
+
+.day-number {
+  font-weight: 700; /* Bolder */
+  margin-bottom: 8px; /* More space */
+  color: #34495e;
+  font-size: 1.1rem; /* Larger font */
+  position: absolute; /* Position day number at top right */
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.calendar-day.today .day-number {
+  background-color: #3498db;
+  color: white;
+}
+
+.day-status {
+  font-size: 0.8rem; /* Slightly larger font for status details */
+  line-height: 1.3;
+  color: #555;
+  margin-top: 25px; /* Push content down to avoid overlapping day number */
+}
+
+.day-status span {
+  display: block;
+  font-weight: 600; /* Bolder status text */
+  margin-bottom: 3px;
+  color: #444;
+}
+
+.day-status small {
+  display: block;
+  color: #777;
+  font-size: 0.75rem; /* Slightly larger */
+}
+
+.hospital-name {
+  font-weight: 700; /* Bolder hospital name */
+  color: #2980b9; /* Darker blue for hospital names */
+  font-size: 0.75rem; /* Consistent with small */
+  margin-top: 4px; /* More space */
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.3rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px; /* Increased gap */
+  margin-top: 30px; /* More space */
+  justify-content: center;
+  padding: 15px; /* More padding */
+  background-color: #f8f9fa;
+  border-radius: 10px; /* More rounded */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Slightly stronger shadow */
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Increased gap */
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.legend-color {
+  width: 20px; /* Larger color swatch */
+  height: 20px;
+  border-radius: 5px; /* More rounded */
+  border: 1px solid #eee;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.legend-color.worked {
+  background-color: #d4edda;
+}
+
+.legend-color.scheduled {
+  background-color: #fff3cd;
+}
+
+.legend-color.today {
+  background-color: #a7d9f9;
+  border-color: #3498db;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nurse-attendance-calendar {
+    padding: 15px;
+    margin: 10px auto;
+  }
+  .nurse-header h2 {
+    font-size: 1.8rem;
+  }
+  .nurse-meta {
+    font-size: 0.85rem;
+  }
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+  .calendar-controls {
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  .calendar-controls select {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  .calendar-grid {
+    gap: 4px;
+  }
+  .calendar-day {
+    min-height: 100px;
+    padding: 8px;
+    font-size: 0.8rem;
+    gap: 3px;
+  }
+  .day-number {
+    font-size: 0.9rem;
+    top: 5px;
+    right: 5px;
+    padding: 1px 4px;
+  }
+  .day-status {
+    font-size: 0.7rem;
+    margin-top: 20px;
+  }
+  .day-status span {
+    font-size: 0.75rem;
+  }
+  .day-status small,
+  .hospital-name {
+    font-size: 0.65rem;
+  }
+  .day-header {
+    padding: 8px 3px;
+    font-size: 0.85rem;
+  }
+  .legend {
+    gap: 15px;
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  .legend-color {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-grid {
+    gap: 2px;
+  }
+  .calendar-day {
+    min-height: 80px;
+    padding: 5px;
+  }
+  .day-number {
+    font-size: 0.8rem;
+  }
+  .day-status {
+    font-size: 0.65rem;
+  }
+  .hospital-name {
+    font-size: 0.6rem;
+  }
+  .day-header {
+    font-size: 0.75rem;
+  }
+  .legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px;
+  }
+}

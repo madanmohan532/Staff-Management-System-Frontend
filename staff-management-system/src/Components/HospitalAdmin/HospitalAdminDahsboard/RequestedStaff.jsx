@@ -1,196 +1,101 @@
 import React, { useState } from "react";
-import "../HospitalAdminDahsboard/RequestedStaff.css";
+import "./StaffRequests.css"; // Import the shared CSS file
 
-const RequestedStaffTab = () => {
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      nurseName: "Alex Morgan",
-      date: "2023-06-15",
-      fromTime: "08:00",
-      toTime: "16:00",
-      department: "Emergency",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      nurseName: "Taylor Swift",
-      date: "2023-06-18",
-      fromTime: "08:00",
-      toTime: "16:00",
-      department: "Pediatrics",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      nurseName: "Jamie Lee",
-      date: "2023-06-16",
-      fromTime: "16:00",
-      toTime: "24:00",
-      department: "ICU",
-      status: "Pending",
-    },
-  ]);
+const RequestedStaff = ({ requestedNurses, onCancelRequest }) => {
+  // State for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // You can adjust the number of items per page
 
-  const handleCancel = (id) => {
-    setRequests(requests.filter((request) => request.id !== id));
-  };
+  // Logic to calculate items for the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = requestedNurses.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleEdit = (request) => {
-    setSelectedRequest(request);
-    setEditModalOpen(true);
-  };
+  // Function to change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleSave = (updatedRequest) => {
-    setRequests(
-      requests.map((request) =>
-        request.id === updatedRequest.id ? updatedRequest : request
-      )
-    );
-    setEditModalOpen(false);
+  // Logic to render page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(requestedNurses.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  const cancelRequest = (nurse) => {
+    const cancelDetail = {
+      staffId: nurse.staffId,
+      date: new Date(nurse.requestedFrom).toLocaleDateString(),
+      from: nurse.requestedFrom,
+      to: nurse.requestedUpto,
+      hospitalId: nurse.hospitalId,
+    };
+    onCancelRequest(cancelDetail);
   };
 
   return (
-    <div className="requested-staff-tab">
-      <h2>Requested Staff</h2>
-
-      <div className="requests-table-container">
-        <table className="requests-table">
-          <thead>
-            <tr>
-              <th>Nurse Name</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Department</th>
-              <th>Status</th>
-              <th>Actions</th>
+    <div className="requested-staff">
+      <h3>Requested Staff</h3>
+      <table className="requests-table">
+        <thead>
+          <tr>
+            <th>Hospital Staff</th>
+            <th>Specialty</th>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentItems.map((nurse) => (
+            <tr key={nurse.id}>
+              <td>{nurse.hospitalStaffId || "N/A"}</td>
+              <td>{nurse.staffId}</td>
+              <td>{new Date(nurse.requestedFrom).toLocaleDateString()}</td>
+              <td>{new Date(nurse.requestedFrom).toLocaleTimeString()}</td>
+              <td>{new Date(nurse.requestedUpto).toLocaleTimeString()}</td>
+              <td>
+                <button
+                  className="cancel-btn"
+                  onClick={() => cancelRequest(nurse)}
+                >
+                  Cancel
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {requests.map((request) => (
-              <tr key={request.id}>
-                <td>{request.nurseName}</td>
-                <td>{request.date}</td>
-                <td>
-                  {request.fromTime} - {request.toTime}
-                </td>
-                <td>{request.department}</td>
-                <td>
-                  <span
-                    className={`status-badge ${request.status.toLowerCase()}`}
-                  >
-                    {request.status}
-                  </span>
-                </td>
-                <td className="actions-cell">
-                  <button
-                    className="edit-btn"
-                    onClick={() => handleEdit(request)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="cancel-btn"
-                    onClick={() => handleCancel(request.id)}
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
 
-      {editModalOpen && selectedRequest && (
-        <div className="edit-modal">
-          <div className="modal-content">
-            <h3>Edit Request</h3>
-
-            <div className="form-group">
-              <label>Date</label>
-              <input
-                type="date"
-                value={selectedRequest.date}
-                onChange={(e) =>
-                  setSelectedRequest({
-                    ...selectedRequest,
-                    date: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>From Time</label>
-                <input
-                  type="time"
-                  value={selectedRequest.fromTime}
-                  onChange={(e) =>
-                    setSelectedRequest({
-                      ...selectedRequest,
-                      fromTime: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="form-group">
-                <label>To Time</label>
-                <input
-                  type="time"
-                  value={selectedRequest.toTime}
-                  onChange={(e) =>
-                    setSelectedRequest({
-                      ...selectedRequest,
-                      toTime: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Department</label>
-              <select
-                value={selectedRequest.department}
-                onChange={(e) =>
-                  setSelectedRequest({
-                    ...selectedRequest,
-                    department: e.target.value,
-                  })
-                }
-              >
-                <option value="Emergency">Emergency</option>
-                <option value="Pediatrics">Pediatrics</option>
-                <option value="ICU">ICU</option>
-                <option value="Surgery">Surgery</option>
-                <option value="Cardiology">Cardiology</option>
-              </select>
-            </div>
-
-            <div className="modal-actions">
-              <button
-                className="save-btn"
-                onClick={() => handleSave(selectedRequest)}
-              >
-                Save Changes
-              </button>
-              <button
-                className="cancel-btn"
-                onClick={() => setEditModalOpen(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Pagination controls */}
+      {requestedNurses.length > itemsPerPage && (
+        <nav className="pagination">
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="page-btn"
+          >
+            Previous
+          </button>
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => paginate(number)}
+              className={`page-btn ${currentPage === number ? "active" : ""}`}
+            >
+              {number}
+            </button>
+          ))}
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === pageNumbers.length}
+            className="page-btn"
+          >
+            Next
+          </button>
+        </nav>
       )}
     </div>
   );
 };
 
-export default RequestedStaffTab;
+export default RequestedStaff;
