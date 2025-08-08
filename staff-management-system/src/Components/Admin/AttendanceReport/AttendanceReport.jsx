@@ -1,4 +1,1417 @@
-import React, { useState, useMemo } from "react";
+// // // import React, { useState, useMemo, useEffect } from "react";
+// // // import axios from "axios";
+// // // import {
+// // //   PieChart,
+// // //   Pie,
+// // //   Cell,
+// // //   ResponsiveContainer,
+// // //   BarChart,
+// // //   Bar,
+// // //   XAxis,
+// // //   YAxis,
+// // //   Tooltip,
+// // //   Legend,
+// // //   CartesianGrid,
+// // // } from "recharts";
+// // // import { ChevronDown, Crown } from "lucide-react";
+// // // import {
+// // //   format,
+// // //   getMonth,
+// // //   getYear,
+// // //   getDaysInMonth,
+// // //   getDate,
+// // //   differenceInHours,
+// // //   startOfMonth,
+// // //   endOfMonth,
+// // //   isWithinInterval,
+// // //   isSameDay,
+// // // } from "date-fns";
+
+// // // // Import the CSS file
+// // // import "./AttendanceReport.css";
+
+// // // // --- HELPER FUNCTIONS & CONSTANTS ---
+// // // const calculateHours = (from, to) => {
+// // //   if (!from || !to) return 0;
+// // //   return differenceInHours(new Date(to), new Date(from));
+// // // };
+
+// // // const years = Array.from({ length: 5 }, (_, i) => getYear(new Date()) - 2 + i);
+// // // const months = Array.from({ length: 12 }, (_, i) => ({
+// // //   value: i,
+// // //   name: format(new Date(0, i), "MMMM"),
+// // // }));
+
+// // // // --- REUSABLE UI & CHART COMPONENTS ---
+
+// // // const DashboardCard = ({ title, value }) => (
+// // //   <div className="dashboard-card">
+// // //     <h4 className="dashboard-card-title">{title}</h4>
+// // //     <p className="dashboard-card-value">{value}</p>
+// // //   </div>
+// // // );
+
+// // // const ShiftStatusChart = ({ data }) => (
+// // //   <ResponsiveContainer width="100%" height={300}>
+// // //     <PieChart>
+// // //       <Pie
+// // //         data={data}
+// // //         cx="50%"
+// // //         cy="50%"
+// // //         innerRadius={60}
+// // //         outerRadius={100}
+// // //         fill="#8884d8"
+// // //         dataKey="value"
+// // //         paddingAngle={5}
+// // //       >
+// // //         {data.map((entry, index) => (
+// // //           <Cell key={`cell-${index}`} fill={entry.color} />
+// // //         ))}
+// // //       </Pie>
+// // //       <Tooltip />
+// // //       <Legend />
+// // //     </PieChart>
+// // //   </ResponsiveContainer>
+// // // );
+
+// // // const DayWiseShiftChart = ({ data }) => (
+// // //   <div style={{ marginTop: "1rem" }}>
+// // //     {data.length > 0 ? (
+// // //       <ResponsiveContainer width="100%" height={300}>
+// // //         <BarChart
+// // //           data={data}
+// // //           layout="vertical"
+// // //           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+// // //         >
+// // //           <CartesianGrid strokeDasharray="3 3" />
+// // //           <XAxis type="number" />
+// // //           <YAxis dataKey="name" type="category" width={80} />
+// // //           <Tooltip formatter={(value) => `${value} hours`} />
+// // //           <Bar dataKey="hours" fill="#82ca9d" name="Hours Worked" />
+// // //         </BarChart>
+// // //       </ResponsiveContainer>
+// // //     ) : (
+// // //       <p style={{ textAlign: "center", color: "#6b7280", padding: "2.5rem 0" }}>
+// // //         No nurses worked on this day.
+// // //       </p>
+// // //     )}
+// // //   </div>
+// // // );
+
+// // // const ConsolidatedDailyReportGrid = ({ nurses, dates }) => {
+// // //   const getColorClass = (hours) => {
+// // //     if (hours === 0) return "hours-none";
+// // //     if (hours > 0 && hours <= 4) return "hours-low";
+// // //     if (hours > 4 && hours <= 8) return "hours-medium";
+// // //     return "hours-high";
+// // //   };
+
+// // //   return (
+// // //     <div className="table-container">
+// // //       <table className="report-table">
+// // //         <thead>
+// // //           <tr>
+// // //             <th className="nurse-name-cell">Nurse</th>
+// // //             {dates.map((day) => (
+// // //               <th key={day}>{day}</th>
+// // //             ))}
+// // //           </tr>
+// // //         </thead>
+// // //         <tbody>
+// // //           {nurses.map((nurse) => (
+// // //             <tr key={nurse._id}>
+// // //               <td className="nurse-name-cell">
+// // //                 {nurse.firstName} {nurse.lastName}
+// // //               </td>
+// // //               {nurse.dailyHours.map((hours, index) => (
+// // //                 <td
+// // //                   key={index}
+// // //                   className={`hours-cell ${getColorClass(hours)}`}
+// // //                   title={hours > 0 ? `${hours.toFixed(1)} hrs` : "No work"}
+// // //                 >
+// // //                   {hours > 0 ? hours.toFixed(1) : "-"}
+// // //                 </td>
+// // //               ))}
+// // //             </tr>
+// // //           ))}
+// // //         </tbody>
+// // //       </table>
+// // //     </div>
+// // //   );
+// // // };
+
+// // // // --- MAIN ATTENDANCE REPORT COMPONENT ---
+
+// // // const AttendanceReport = () => {
+// // //   const [staffData, setStaffData] = useState([]);
+// // //   const [isLoading, setIsLoading] = useState(true);
+// // //   const [error, setError] = useState(null);
+
+// // //   const today = new Date();
+// // //   const [selectedNurseId, setSelectedNurseId] = useState("all");
+// // //   const [selectedDate, setSelectedDate] = useState(format(today, "yyyy-MM-dd"));
+// // //   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
+// // //   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+
+// // //   useEffect(() => {
+// // //     const fetchNurses = async () => {
+// // //       setIsLoading(true);
+// // //       setError(null);
+// // //       try {
+// // //         const response = await axios.get(
+// // //           "http://localhost:9999/admin-service/api/admin/nurse/nurseDetails"
+// // //         );
+// // //         if (response.status === 200 && Array.isArray(response.data)) {
+// // //           const validNurses = response.data.filter(
+// // //             (nurse) => nurse.firstName && nurse.lastName
+// // //           );
+// // //           setStaffData(validNurses);
+// // //         } else {
+// // //           console.log("API did not return a valid array of nurses");
+// // //           setError("Could not fetch nurse data.");
+// // //         }
+// // //       } catch (error) {
+// // //         console.error("Error fetching nurses:", error);
+// // //         setError("Failed to fetch nurse data. Please check the console.");
+// // //       } finally {
+// // //         setIsLoading(false);
+// // //       }
+// // //     };
+
+// // //     fetchNurses();
+// // //   }, []);
+
+// // //   const {
+// // //     dashboardStats,
+// // //     shiftStatusData,
+// // //     dayWiseChartData,
+// // //     consolidatedDailyData,
+// // //     mostActiveNurse,
+// // //   } = useMemo(() => {
+// // //     if (staffData.length === 0) {
+// // //       return {
+// // //         dashboardStats: {
+// // //           requests: 0,
+// // //           accepted: 0,
+// // //           rejected: 0,
+// // //           hoursThisMonth: "0.0",
+// // //         },
+// // //         shiftStatusData: [],
+// // //         dayWiseChartData: [],
+// // //         consolidatedDailyData: { nurses: [], dates: [] },
+// // //         mostActiveNurse: null,
+// // //       };
+// // //     }
+
+// // //     // 1. Filter staff data for dashboard cards
+// // //     const filteredStaffDataForCards =
+// // //       selectedNurseId === "all"
+// // //         ? staffData
+// // //         : staffData.filter((s) => s._id === selectedNurseId);
+
+// // //     const allShifts = filteredStaffDataForCards.flatMap(
+// // //       (s) => s.workSchedule || []
+// // //     );
+// // //     const acceptedShifts = allShifts.filter((s) => s.status === "accepted");
+// // //     const currentMonthInterval = {
+// // //       start: startOfMonth(today),
+// // //       end: endOfMonth(today),
+// // //     };
+// // //     const hoursThisMonth = acceptedShifts
+// // //       .filter((s) => isWithinInterval(new Date(s.date), currentMonthInterval))
+// // //       .reduce(
+// // //         (total, shift) => total + calculateHours(shift.from, shift.to),
+// // //         0
+// // //       );
+
+// // //     const dashboardStats = {
+// // //       requests: allShifts.length,
+// // //       accepted: acceptedShifts.length,
+// // //       rejected: allShifts.filter((s) => s.status === "rejected").length,
+// // //       hoursThisMonth: hoursThisMonth.toFixed(1),
+// // //     };
+
+// // //     // 2. Data for Shift Status Pie Chart (based on same filter)
+// // //     const statusCounts = allShifts.reduce((acc, shift) => {
+// // //       acc[shift.status] = (acc[shift.status] || 0) + 1;
+// // //       return acc;
+// // //     }, {});
+// // //     const SHIFT_COLORS = {
+// // //       accepted: "#22c55e",
+// // //       rejected: "#ef4444",
+// // //       requested: "#facc15",
+// // //       cancelled: "#6b7280",
+// // //       removed: "#9ca3af",
+// // //     };
+// // //     const shiftStatusData = Object.keys(statusCounts).map((status) => ({
+// // //       name: status.charAt(0).toUpperCase() + status.slice(1),
+// // //       value: statusCounts[status],
+// // //       color: SHIFT_COLORS[status] || "#a8a29e",
+// // //     }));
+
+// // //     // 3. Data for Day-wise Shift Chart (based on same filter)
+// // //     const dayWiseDate = new Date(selectedDate);
+// // //     const dayWiseChartData = filteredStaffDataForCards
+// // //       .map((nurse) => {
+// // //         const hoursOnDay = (nurse.workSchedule || [])
+// // //           .filter(
+// // //             (s) =>
+// // //               s.status === "accepted" &&
+// // //               isSameDay(new Date(s.date), dayWiseDate)
+// // //           )
+// // //           .reduce(
+// // //             (total, shift) => total + calculateHours(shift.from, shift.to),
+// // //             0
+// // //           );
+// // //         return { name: nurse.firstName, hours: hoursOnDay };
+// // //       })
+// // //       .filter((item) => item.hours > 0);
+
+// // //     // 4. Data for Consolidated Report (always shows all nurses)
+// // //     const daysInMonth = getDaysInMonth(new Date(selectedYear, selectedMonth));
+// // //     const dates = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+// // //     const nursesWithHours = staffData.map((nurse) => {
+// // //       const dailyHours = new Array(daysInMonth).fill(0);
+// // //       (nurse.workSchedule || [])
+// // //         .filter(
+// // //           (s) =>
+// // //             s.status === "accepted" &&
+// // //             getMonth(new Date(s.date)) === selectedMonth &&
+// // //             getYear(new Date(s.date)) === selectedYear
+// // //         )
+// // //         .forEach((shift) => {
+// // //           const day = getDate(new Date(shift.date));
+// // //           dailyHours[day - 1] += calculateHours(shift.from, shift.to);
+// // //         });
+// // //       return { ...nurse, dailyHours };
+// // //     });
+// // //     const consolidatedDailyData = { nurses: nursesWithHours, dates };
+
+// // //     // 5. Find Most Active Nurse (always calculated from all staff for the current month)
+// // //     const hoursByNurse = staffData.map((nurse) => {
+// // //       const monthlyHours = (nurse.workSchedule || [])
+// // //         .filter(
+// // //           (s) =>
+// // //             s.status === "accepted" &&
+// // //             isWithinInterval(new Date(s.date), currentMonthInterval)
+// // //         )
+// // //         .reduce(
+// // //           (total, shift) => total + calculateHours(shift.from, shift.to),
+// // //           0
+// // //         );
+// // //       return {
+// // //         name: `${nurse.firstName} ${nurse.lastName}`,
+// // //         hours: monthlyHours,
+// // //       };
+// // //     });
+// // //     let mostActiveNurse = null;
+// // //     if (hoursByNurse.length > 0) {
+// // //       const topPerformer = hoursByNurse.reduce((max, nurse) =>
+// // //         nurse.hours > max.hours ? nurse : max
+// // //       );
+// // //       if (topPerformer.hours > 0) {
+// // //         mostActiveNurse = topPerformer;
+// // //       }
+// // //     }
+
+// // //     return {
+// // //       dashboardStats,
+// // //       shiftStatusData,
+// // //       dayWiseChartData,
+// // //       consolidatedDailyData,
+// // //       mostActiveNurse,
+// // //     };
+// // //   }, [staffData, selectedNurseId, selectedDate, selectedMonth, selectedYear]);
+
+// // //   if (isLoading) {
+// // //     return (
+// // //       <div className="report-container">
+// // //         <p>Loading nurse data...</p>
+// // //       </div>
+// // //     );
+// // //   }
+
+// // //   if (error) {
+// // //     return (
+// // //       <div className="report-container">
+// // //         <p style={{ color: "red" }}>{error}</p>
+// // //       </div>
+// // //     );
+// // //   }
+
+// // //   return (
+// // //     <div className="report-container">
+// // //       <div className="report-wrapper">
+// // //         <h1 className="report-header">Admin Attendance Report</h1>
+
+// // //         <div className="card-header-flex">
+// // //           <h2 className="card-title" style={{ marginBottom: 0 }}>
+// // //             {selectedNurseId === "all"
+// // //               ? "Overall Stats"
+// // //               : `Stats for ${
+// // //                   staffData.find((s) => s._id === selectedNurseId)?.firstName
+// // //                 }`}
+// // //           </h2>
+// // //           <div className="select-wrapper">
+// // //             <select
+// // //               className="filter-select"
+// // //               value={selectedNurseId}
+// // //               onChange={(e) => setSelectedNurseId(e.target.value)}
+// // //             >
+// // //               <option value="all">All Nurses</option>
+// // //               {staffData.map((nurse) => (
+// // //                 <option key={nurse._id} value={nurse._id}>
+// // //                   {nurse.firstName} {nurse.lastName}
+// // //                 </option>
+// // //               ))}
+// // //             </select>
+// // //             <div className="select-arrow">
+// // //               <ChevronDown size={16} />
+// // //             </div>
+// // //           </div>
+// // //         </div>
+
+// // //         <div className="dashboard-grid">
+// // //           <DashboardCard
+// // //             title="Total Requests"
+// // //             value={dashboardStats.requests}
+// // //           />
+// // //           <DashboardCard
+// // //             title="Shifts Accepted"
+// // //             value={dashboardStats.accepted}
+// // //           />
+// // //           <DashboardCard
+// // //             title="Shifts Rejected"
+// // //             value={dashboardStats.rejected}
+// // //           />
+// // //           <DashboardCard
+// // //             title={`Hours This Month (${format(today, "MMMM")})`}
+// // //             value={dashboardStats.hoursThisMonth}
+// // //           />
+// // //         </div>
+
+// // //         <div className="main-grid">
+// // //           <div className="card card-padded">
+// // //             <h3 className="card-title">Request Status Breakdown</h3>
+// // //             <ShiftStatusChart data={shiftStatusData} />
+// // //           </div>
+// // //           <div className="card most-active-card">
+// // //             <h3 className="card-title">Most Active This Month</h3>
+// // //             {mostActiveNurse ? (
+// // //               <>
+// // //                 <Crown size={64} color="#f59e0b" />
+// // //                 <p className="most-active-name">{mostActiveNurse.name}</p>
+// // //                 <p className="most-active-hours">
+// // //                   {mostActiveNurse.hours.toFixed(1)}{" "}
+// // //                   <span className="most-active-hours-label">hours</span>
+// // //                 </p>
+// // //                 <p className="most-active-date-label">
+// // //                   in {format(today, "MMMM yyyy")}
+// // //                 </p>
+// // //               </>
+// // //             ) : (
+// // //               <p style={{ textAlign: "center", color: "#6b7280" }}>
+// // //                 No work recorded this month.
+// // //               </p>
+// // //             )}
+// // //           </div>
+// // //         </div>
+
+// // //         <div className="card card-padded">
+// // //           <div className="card-header-flex">
+// // //             <h3 className="card-title">Day-wise Shifts</h3>
+// // //             <input
+// // //               type="date"
+// // //               value={selectedDate}
+// // //               onChange={(e) => setSelectedDate(e.target.value)}
+// // //               className="filter-date"
+// // //             />
+// // //           </div>
+// // //           <DayWiseShiftChart data={dayWiseChartData} />
+// // //         </div>
+
+// // //         <div className="card card-padded">
+// // //           <div className="card-header-flex">
+// // //             <h3 className="card-title">Consolidated Monthly Report</h3>
+// // //             <div className="date-filter-controls">
+// // //               <select
+// // //                 className="filter-select"
+// // //                 value={selectedMonth}
+// // //                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
+// // //               >
+// // //                 {months.map((m) => (
+// // //                   <option key={m.value} value={m.value}>
+// // //                     {m.name}
+// // //                   </option>
+// // //                 ))}
+// // //               </select>
+// // //               <select
+// // //                 className="filter-select"
+// // //                 value={selectedYear}
+// // //                 onChange={(e) => setSelectedYear(Number(e.target.value))}
+// // //               >
+// // //                 {years.map((y) => (
+// // //                   <option key={y} value={y}>
+// // //                     {y}
+// // //                   </option>
+// // //                 ))}
+// // //               </select>
+// // //             </div>
+// // //           </div>
+// // //           <ConsolidatedDailyReportGrid {...consolidatedDailyData} />
+// // //         </div>
+// // //       </div>
+// // //     </div>
+// // //   );
+// // // };
+
+// // // export default AttendanceReport;
+
+// // import React, { useState, useMemo, useEffect } from "react";
+// // import axios from "axios";
+// // import {
+// //   PieChart,
+// //   Pie,
+// //   Cell,
+// //   ResponsiveContainer,
+// //   BarChart,
+// //   Bar,
+// //   XAxis,
+// //   YAxis,
+// //   Tooltip,
+// //   Legend,
+// //   CartesianGrid,
+// // } from "recharts";
+// // import { ChevronDown, Crown } from "lucide-react";
+// // import {
+// //   format,
+// //   getMonth,
+// //   getYear,
+// //   getDaysInMonth,
+// //   getDate,
+// //   differenceInHours,
+// //   startOfMonth,
+// //   endOfMonth,
+// //   isWithinInterval,
+// //   isSameDay,
+// // } from "date-fns";
+
+// // // Import the CSS file
+// // import "./AttendanceReport.css";
+
+// // // --- HELPER FUNCTIONS & CONSTANTS ---
+// // const calculateHours = (from, to) => {
+// //   if (!from || !to) return 0;
+// //   return differenceInHours(new Date(to), new Date(from));
+// // };
+
+// // const years = Array.from({ length: 5 }, (_, i) => getYear(new Date()) - 2 + i);
+// // // Add "All Months" option to the months array
+// // const months = [
+// //   { value: "all", name: "All Months" },
+// //   ...Array.from({ length: 12 }, (_, i) => ({
+// //     value: i,
+// //     name: format(new Date(0, i), "MMMM"),
+// //   })),
+// // ];
+
+// // // --- REUSABLE UI & CHART COMPONENTS ---
+
+// // const DashboardCard = ({ title, value }) => (
+// //   <div className="dashboard-card">
+// //     <h4 className="dashboard-card-title">{title}</h4>
+// //     <p className="dashboard-card-value">{value}</p>
+// //   </div>
+// // );
+
+// // const ShiftStatusChart = ({ data }) => (
+// //   <ResponsiveContainer width="100%" height={300}>
+// //     <PieChart>
+// //       <Pie
+// //         data={data}
+// //         cx="50%"
+// //         cy="50%"
+// //         innerRadius={60}
+// //         outerRadius={100}
+// //         fill="#8884d8"
+// //         dataKey="value"
+// //         paddingAngle={5}
+// //       >
+// //         {data.map((entry, index) => (
+// //           <Cell key={`cell-${index}`} fill={entry.color} />
+// //         ))}
+// //       </Pie>
+// //       <Tooltip />
+// //       <Legend />
+// //     </PieChart>
+// //   </ResponsiveContainer>
+// // );
+
+// // const DayWiseShiftChart = ({ data }) => (
+// //   <div style={{ marginTop: "1rem" }}>
+// //     {data.length > 0 ? (
+// //       <ResponsiveContainer width="100%" height={300}>
+// //         <BarChart
+// //           data={data}
+// //           layout="vertical"
+// //           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+// //         >
+// //           <CartesianGrid strokeDasharray="3 3" />
+// //           <XAxis type="number" />
+// //           <YAxis dataKey="name" type="category" width={80} />
+// //           <Tooltip formatter={(value) => `${value} hours`} />
+// //           <Bar dataKey="hours" fill="#82ca9d" name="Hours Worked" />
+// //         </BarChart>
+// //       </ResponsiveContainer>
+// //     ) : (
+// //       <p style={{ textAlign: "center", color: "#6b7280", padding: "2.5rem 0" }}>
+// //         No nurses worked on this day.
+// //       </p>
+// //     )}
+// //   </div>
+// // );
+
+// // // NEW: Component to display the consolidated monthly/daily bar chart
+// // const ConsolidatedMonthlyChart = ({ data, view }) => (
+// //   <div style={{ marginTop: "1rem" }}>
+// //     <ResponsiveContainer width="100%" height={300}>
+// //       <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+// //         <CartesianGrid strokeDasharray="3 3" />
+// //         <XAxis dataKey="label" />
+// //         <YAxis />
+// //         <Tooltip formatter={(value) => `${value.toFixed(1)} hours`} />
+// //         <Legend />
+// //         <Bar
+// //           dataKey="hours"
+// //           fill="#4f46e5"
+// //           name={`Total Hours Worked by ${view}`}
+// //         />
+// //       </BarChart>
+// //     </ResponsiveContainer>
+// //   </div>
+// // );
+
+// // // --- MAIN ATTENDANCE REPORT COMPONENT ---
+
+// // const AttendanceReport = () => {
+// //   const [staffData, setStaffData] = useState([]);
+// //   const [isLoading, setIsLoading] = useState(true);
+// //   const [error, setError] = useState(null);
+
+// //   const today = new Date();
+// //   const [selectedNurseId, setSelectedNurseId] = useState("all");
+// //   const [selectedDate, setSelectedDate] = useState(format(today, "yyyy-MM-dd"));
+// //   const [selectedMonth, setSelectedMonth] = useState("all"); // Default to "all"
+// //   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+
+// //   useEffect(() => {
+// //     const fetchNurses = async () => {
+// //       setIsLoading(true);
+// //       setError(null);
+// //       try {
+// //         const response = await axios.get(
+// //           "http://localhost:9999/admin-service/api/admin/nurse/nurseDetails"
+// //         );
+// //         if (response.status === 200 && Array.isArray(response.data)) {
+// //           const validNurses = response.data.filter(
+// //             (nurse) => nurse.firstName && nurse.lastName
+// //           );
+// //           setStaffData(validNurses);
+// //         } else {
+// //           console.log("API did not return a valid array of nurses");
+// //           setError("Could not fetch nurse data.");
+// //         }
+// //       } catch (error) {
+// //         console.error("Error fetching nurses:", error);
+// //         setError("Failed to fetch nurse data. Please check the console.");
+// //       } finally {
+// //         setIsLoading(false);
+// //       }
+// //     };
+
+// //     fetchNurses();
+// //   }, []);
+
+// //   const {
+// //     dashboardStats,
+// //     shiftStatusData,
+// //     dayWiseChartData,
+// //     consolidatedChartData,
+// //     mostActiveNurse,
+// //   } = useMemo(() => {
+// //     if (staffData.length === 0) {
+// //       return {
+// //         dashboardStats: {
+// //           requests: 0,
+// //           accepted: 0,
+// //           rejected: 0,
+// //           hoursThisMonth: "0.0",
+// //         },
+// //         shiftStatusData: [],
+// //         dayWiseChartData: [],
+// //         consolidatedChartData: { data: [], view: "Month" },
+// //         mostActiveNurse: null,
+// //       };
+// //     }
+
+// //     // --- Calculations for filterable cards and charts ---
+// //     const filteredStaffDataForCards =
+// //       selectedNurseId === "all"
+// //         ? staffData
+// //         : staffData.filter((s) => s._id === selectedNurseId);
+
+// //     const allShifts = filteredStaffDataForCards.flatMap(
+// //       (s) => s.workSchedule || []
+// //     );
+// //     const acceptedShifts = allShifts.filter((s) => s.status === "accepted");
+// //     const currentMonthInterval = {
+// //       start: startOfMonth(today),
+// //       end: endOfMonth(today),
+// //     };
+// //     const hoursThisMonth = acceptedShifts
+// //       .filter((s) => isWithinInterval(new Date(s.date), currentMonthInterval))
+// //       .reduce(
+// //         (total, shift) => total + calculateHours(shift.from, shift.to),
+// //         0
+// //       );
+
+// //     const dashboardStats = {
+// //       requests: allShifts.length,
+// //       accepted: acceptedShifts.length,
+// //       rejected: allShifts.filter((s) => s.status === "rejected").length,
+// //       hoursThisMonth: hoursThisMonth.toFixed(1),
+// //     };
+
+// //     const statusCounts = allShifts.reduce((acc, shift) => {
+// //       acc[shift.status] = (acc[shift.status] || 0) + 1;
+// //       return acc;
+// //     }, {});
+// //     const SHIFT_COLORS = {
+// //       accepted: "#22c55e",
+// //       rejected: "#ef4444",
+// //       requested: "#facc15",
+// //       cancelled: "#6b7280",
+// //       removed: "#9ca3af",
+// //     };
+// //     const shiftStatusData = Object.keys(statusCounts).map((status) => ({
+// //       name: status.charAt(0).toUpperCase() + status.slice(1),
+// //       value: statusCounts[status],
+// //       color: SHIFT_COLORS[status] || "#a8a29e",
+// //     }));
+
+// //     const dayWiseDate = new Date(selectedDate);
+// //     const dayWiseChartData = filteredStaffDataForCards
+// //       .map((nurse) => {
+// //         const hoursOnDay = (nurse.workSchedule || [])
+// //           .filter(
+// //             (s) =>
+// //               s.status === "accepted" &&
+// //               isSameDay(new Date(s.date), dayWiseDate)
+// //           )
+// //           .reduce(
+// //             (total, shift) => total + calculateHours(shift.from, shift.to),
+// //             0
+// //           );
+// //         return { name: nurse.firstName, hours: hoursOnDay };
+// //       })
+// //       .filter((item) => item.hours > 0);
+
+// //     // --- NEW: Logic for the Consolidated Bar Chart ---
+// //     let consolidatedChartData = {};
+// //     const allAcceptedShifts = staffData
+// //       .flatMap((s) => s.workSchedule || [])
+// //       .filter((s) => s.status === "accepted");
+
+// //     if (selectedMonth === "all") {
+// //       // Yearly view: aggregate hours by month
+// //       const monthlyHours = Array.from({ length: 12 }, (_, i) => ({
+// //         label: format(new Date(0, i), "MMM"),
+// //         hours: 0,
+// //       }));
+// //       allAcceptedShifts
+// //         .filter((s) => getYear(new Date(s.date)) === selectedYear)
+// //         .forEach((s) => {
+// //           const monthIndex = getMonth(new Date(s.date));
+// //           monthlyHours[monthIndex].hours += calculateHours(s.from, s.to);
+// //         });
+// //       consolidatedChartData = { data: monthlyHours, view: "Month" };
+// //     } else {
+// //       // Daily view: aggregate hours by day for the selected month
+// //       const daysInMonth = getDaysInMonth(new Date(selectedYear, selectedMonth));
+// //       const dailyHours = Array.from({ length: daysInMonth }, (_, i) => ({
+// //         label: `${i + 1}`,
+// //         hours: 0,
+// //       }));
+// //       allAcceptedShifts
+// //         .filter(
+// //           (s) =>
+// //             getYear(new Date(s.date)) === selectedYear &&
+// //             getMonth(new Date(s.date)) === selectedMonth
+// //         )
+// //         .forEach((s) => {
+// //           const dayIndex = getDate(new Date(s.date)) - 1;
+// //           dailyHours[dayIndex].hours += calculateHours(s.from, s.to);
+// //         });
+// //       consolidatedChartData = { data: dailyHours, view: "Day" };
+// //     }
+
+// //     // --- Most Active Nurse (calculation remains the same) ---
+// //     const hoursByNurse = staffData.map((nurse) => {
+// //       const monthlyHours = (nurse.workSchedule || [])
+// //         .filter(
+// //           (s) =>
+// //             s.status === "accepted" &&
+// //             isWithinInterval(new Date(s.date), currentMonthInterval)
+// //         )
+// //         .reduce(
+// //           (total, shift) => total + calculateHours(shift.from, shift.to),
+// //           0
+// //         );
+// //       return {
+// //         name: `${nurse.firstName} ${nurse.lastName}`,
+// //         hours: monthlyHours,
+// //       };
+// //     });
+// //     let mostActiveNurse = null;
+// //     if (hoursByNurse.length > 0) {
+// //       const topPerformer = hoursByNurse.reduce((max, nurse) =>
+// //         nurse.hours > max.hours ? nurse : max
+// //       );
+// //       if (topPerformer.hours > 0) {
+// //         mostActiveNurse = topPerformer;
+// //       }
+// //     }
+
+// //     return {
+// //       dashboardStats,
+// //       shiftStatusData,
+// //       dayWiseChartData,
+// //       consolidatedChartData,
+// //       mostActiveNurse,
+// //     };
+// //   }, [staffData, selectedNurseId, selectedDate, selectedMonth, selectedYear]);
+
+// //   if (isLoading) {
+// //     return (
+// //       <div className="report-container">
+// //         <p>Loading nurse data...</p>
+// //       </div>
+// //     );
+// //   }
+
+// //   if (error) {
+// //     return (
+// //       <div className="report-container">
+// //         <p style={{ color: "red" }}>{error}</p>
+// //       </div>
+// //     );
+// //   }
+
+// //   return (
+// //     <div className="report-container">
+// //       <div className="report-wrapper">
+// //         <h1 className="report-header">Admin Attendance Report</h1>
+
+// //         <div className="card-header-flex">
+// //           <h2 className="card-title" style={{ marginBottom: 0 }}>
+// //             {selectedNurseId === "all"
+// //               ? "Overall Stats"
+// //               : `Stats for ${
+// //                   staffData.find((s) => s._id === selectedNurseId)?.firstName
+// //                 }`}
+// //           </h2>
+// //           <div className="select-wrapper">
+// //             <select
+// //               className="filter-select"
+// //               value={selectedNurseId}
+// //               onChange={(e) => setSelectedNurseId(e.target.value)}
+// //             >
+// //               <option value="all">All Nurses</option>
+// //               {staffData.map((nurse) => (
+// //                 <option key={nurse._id} value={nurse._id}>
+// //                   {nurse.firstName} {nurse.lastName}
+// //                 </option>
+// //               ))}
+// //             </select>
+// //             <div className="select-arrow">
+// //               <ChevronDown size={16} />
+// //             </div>
+// //           </div>
+// //         </div>
+
+// //         <div className="dashboard-grid">
+// //           <DashboardCard
+// //             title="Total Requests"
+// //             value={dashboardStats.requests}
+// //           />
+// //           <DashboardCard
+// //             title="Shifts Accepted"
+// //             value={dashboardStats.accepted}
+// //           />
+// //           <DashboardCard
+// //             title="Shifts Rejected"
+// //             value={dashboardStats.rejected}
+// //           />
+// //           <DashboardCard
+// //             title={`Hours This Month (${format(today, "MMMM")})`}
+// //             value={dashboardStats.hoursThisMonth}
+// //           />
+// //         </div>
+
+// //         <div className="main-grid">
+// //           <div className="card card-padded">
+// //             <h3 className="card-title">Request Status Breakdown</h3>
+// //             <ShiftStatusChart data={shiftStatusData} />
+// //           </div>
+// //           <div className="card most-active-card">
+// //             <h3 className="card-title">Most Active This Month</h3>
+// //             {mostActiveNurse ? (
+// //               <>
+// //                 <Crown size={64} color="#f59e0b" />
+// //                 <p className="most-active-name">{mostActiveNurse.name}</p>
+// //                 <p className="most-active-hours">
+// //                   {mostActiveNurse.hours.toFixed(1)}{" "}
+// //                   <span className="most-active-hours-label">hours</span>
+// //                 </p>
+// //                 <p className="most-active-date-label">
+// //                   in {format(today, "MMMM yyyy")}
+// //                 </p>
+// //               </>
+// //             ) : (
+// //               <p style={{ textAlign: "center", color: "#6b7280" }}>
+// //                 No work recorded this month.
+// //               </p>
+// //             )}
+// //           </div>
+// //         </div>
+
+// //         <div className="card card-padded">
+// //           <div className="card-header-flex">
+// //             <h3 className="card-title">Day-wise Shifts</h3>
+// //             <input
+// //               type="date"
+// //               value={selectedDate}
+// //               onChange={(e) => setSelectedDate(e.target.value)}
+// //               className="filter-date"
+// //             />
+// //           </div>
+// //           <DayWiseShiftChart data={dayWiseChartData} />
+// //         </div>
+
+// //         <div className="card card-padded">
+// //           <div className="card-header-flex">
+// //             <h3 className="card-title">Consolidated Workload Report</h3>
+// //             <div className="date-filter-controls">
+// //               <select
+// //                 className="filter-select"
+// //                 value={selectedMonth}
+// //                 onChange={(e) => setSelectedMonth(e.target.value)}
+// //               >
+// //                 {months.map((m) => (
+// //                   <option key={m.value} value={m.value}>
+// //                     {m.name}
+// //                   </option>
+// //                 ))}
+// //               </select>
+// //               <select
+// //                 className="filter-select"
+// //                 value={selectedYear}
+// //                 onChange={(e) => setSelectedYear(Number(e.target.value))}
+// //               >
+// //                 {years.map((y) => (
+// //                   <option key={y} value={y}>
+// //                     {y}
+// //                   </option>
+// //                 ))}
+// //               </select>
+// //             </div>
+// //           </div>
+// //           <ConsolidatedMonthlyChart
+// //             data={consolidatedChartData.data}
+// //             view={consolidatedChartData.view}
+// //           />
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
+// // };
+
+// // export default AttendanceReport;
+
+// import React, { useState, useMemo, useEffect } from "react";
+// import axios from "axios";
+// import {
+//   PieChart,
+//   Pie,
+//   Cell,
+//   ResponsiveContainer,
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   Legend,
+//   CartesianGrid,
+// } from "recharts";
+// import { ChevronDown, Crown } from "lucide-react";
+// import {
+//   format,
+//   getMonth,
+//   getYear,
+//   getDaysInMonth,
+//   getDate,
+//   differenceInHours,
+//   startOfMonth,
+//   endOfMonth,
+//   isWithinInterval,
+//   isSameDay,
+// } from "date-fns";
+
+// // Import the CSS file
+// import "./AttendanceReport.css";
+
+// // --- HELPER FUNCTIONS & CONSTANTS ---
+// const calculateHours = (from, to) => {
+//   if (!from || !to) return 0;
+//   return differenceInHours(new Date(to), new Date(from));
+// };
+
+// const years = Array.from({ length: 5 }, (_, i) => getYear(new Date()) - 2 + i);
+// // Add "All Months" option to the months array
+// const months = [
+//   { value: "all", name: "All Months" },
+//   ...Array.from({ length: 12 }, (_, i) => ({
+//     value: i,
+//     name: format(new Date(0, i), "MMMM"),
+//   })),
+// ];
+
+// // --- REUSABLE UI & CHART COMPONENTS ---
+
+// const DashboardCard = ({ title, value }) => (
+//   <div className="dashboard-card">
+//     <h4 className="dashboard-card-title">{title}</h4>
+//     <p className="dashboard-card-value">{value}</p>
+//   </div>
+// );
+
+// const ShiftStatusChart = ({ data }) => (
+//   <ResponsiveContainer width="100%" height={300}>
+//     <PieChart>
+//       <Pie
+//         data={data}
+//         cx="50%"
+//         cy="50%"
+//         innerRadius={60}
+//         outerRadius={100}
+//         fill="#8884d8"
+//         dataKey="value"
+//         paddingAngle={5}
+//       >
+//         {data.map((entry, index) => (
+//           <Cell key={`cell-${index}`} fill={entry.color} />
+//         ))}
+//       </Pie>
+//       <Tooltip />
+//       <Legend />
+//     </PieChart>
+//   </ResponsiveContainer>
+// );
+
+// const DayWiseShiftChart = ({ data }) => (
+//   <div style={{ marginTop: "1rem" }}>
+//     {data.length > 0 ? (
+//       <ResponsiveContainer width="100%" height={300}>
+//         <BarChart
+//           data={data}
+//           layout="vertical"
+//           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+//         >
+//           <CartesianGrid strokeDasharray="3 3" />
+//           <XAxis type="number" />
+//           <YAxis dataKey="name" type="category" width={80} />
+//           <Tooltip formatter={(value) => `${value} hours`} />
+//           <Bar dataKey="hours" fill="#82ca9d" name="Hours Worked" />
+//         </BarChart>
+//       </ResponsiveContainer>
+//     ) : (
+//       <p style={{ textAlign: "center", color: "#6b7280", padding: "2.5rem 0" }}>
+//         No nurses worked on this day.
+//       </p>
+//     )}
+//   </div>
+// );
+
+// // NEW: Component to display the consolidated monthly/daily bar chart
+// const ConsolidatedMonthlyChart = ({ data, view }) => (
+//   <div style={{ marginTop: "1rem" }}>
+//     <ResponsiveContainer width="100%" height={300}>
+//       <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+//         <CartesianGrid strokeDasharray="3 3" />
+//         <XAxis dataKey="label" />
+//         <YAxis />
+//         <Tooltip formatter={(value) => `${value.toFixed(1)} hours`} />
+//         <Legend />
+//         <Bar
+//           dataKey="hours"
+//           fill="#4f46e5"
+//           name={`Total Hours Worked by ${view}`}
+//         />
+//       </BarChart>
+//     </ResponsiveContainer>
+//   </div>
+// );
+
+// // --- MAIN ATTENDANCE REPORT COMPONENT ---
+
+// const AttendanceReport = () => {
+//   const [staffData, setStaffData] = useState([]);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   const today = new Date();
+//   const [selectedNurseId, setSelectedNurseId] = useState("all");
+//   const [selectedDate, setSelectedDate] = useState(format(today, "yyyy-MM-dd"));
+//   const [selectedMonth, setSelectedMonth] = useState("all"); // Default to "all"
+//   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+
+//   useEffect(() => {
+//     const fetchNurses = async () => {
+//       setIsLoading(true);
+//       setError(null);
+//       try {
+//         const response = await axios.get(
+//           "http://localhost:9999/admin-service/api/admin/nurse/nurseDetails"
+//         );
+//         if (response.status === 200 && Array.isArray(response.data)) {
+//           const validNurses = response.data.filter(
+//             (nurse) => nurse.firstName && nurse.lastName
+//           );
+//           setStaffData(validNurses);
+//         } else {
+//           console.log("API did not return a valid array of nurses");
+//           setError("Could not fetch nurse data.");
+//         }
+//       } catch (error) {
+//         console.error("Error fetching nurses:", error);
+//         setError("Failed to fetch nurse data. Please check the console.");
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     fetchNurses();
+//   }, []);
+
+//   const {
+//     dashboardStats,
+//     shiftStatusData,
+//     dayWiseChartData,
+//     consolidatedChartData,
+//     mostActiveNurse,
+//   } = useMemo(() => {
+//     if (staffData.length === 0) {
+//       return {
+//         dashboardStats: {
+//           requests: 0,
+//           accepted: 0,
+//           rejected: 0,
+//           hoursThisMonth: "0.0",
+//         },
+//         shiftStatusData: [],
+//         dayWiseChartData: [],
+//         consolidatedChartData: { data: [], view: "Month" },
+//         mostActiveNurse: null,
+//       };
+//     }
+
+//     // --- Calculations for filterable cards and charts ---
+//     const filteredStaffDataForCards =
+//       selectedNurseId === "all"
+//         ? staffData
+//         : staffData.filter((s) => s._id === selectedNurseId);
+
+//     const allShifts = filteredStaffDataForCards.flatMap(
+//       (s) => s.workSchedule || []
+//     );
+//     const acceptedShifts = allShifts.filter((s) => s.status === "accepted");
+//     const currentMonthInterval = {
+//       start: startOfMonth(today),
+//       end: endOfMonth(today),
+//     };
+//     const hoursThisMonth = acceptedShifts
+//       .filter((s) => isWithinInterval(new Date(s.date), currentMonthInterval))
+//       .reduce(
+//         (total, shift) => total + calculateHours(shift.from, shift.to),
+//         0
+//       );
+
+//     const dashboardStats = {
+//       requests: allShifts.length,
+//       accepted: acceptedShifts.length,
+//       rejected: allShifts.filter((s) => s.status === "rejected").length,
+//       hoursThisMonth: hoursThisMonth.toFixed(1),
+//     };
+
+//     const statusCounts = allShifts.reduce((acc, shift) => {
+//       acc[shift.status] = (acc[shift.status] || 0) + 1;
+//       return acc;
+//     }, {});
+//     const SHIFT_COLORS = {
+//       accepted: "#22c55e",
+//       rejected: "#ef4444",
+//       requested: "#facc15",
+//       cancelled: "#6b7280",
+//       removed: "#9ca3af",
+//     };
+//     const shiftStatusData = Object.keys(statusCounts).map((status) => ({
+//       name: status.charAt(0).toUpperCase() + status.slice(1),
+//       value: statusCounts[status],
+//       color: SHIFT_COLORS[status] || "#a8a29e",
+//     }));
+
+//     const dayWiseDate = new Date(selectedDate);
+//     const dayWiseChartData = filteredStaffDataForCards
+//       .map((nurse) => {
+//         const hoursOnDay = (nurse.workSchedule || [])
+//           .filter(
+//             (s) =>
+//               s.status === "accepted" &&
+//               isSameDay(new Date(s.date), dayWiseDate)
+//           )
+//           .reduce(
+//             (total, shift) => total + calculateHours(shift.from, shift.to),
+//             0
+//           );
+//         return { name: nurse.firstName, hours: hoursOnDay };
+//       })
+//       .filter((item) => item.hours > 0);
+
+//     // --- Logic for the Consolidated Bar Chart ---
+//     let consolidatedChartData = {};
+//     const allAcceptedShifts = staffData
+//       .flatMap((s) => s.workSchedule || [])
+//       .filter((s) => s.status === "accepted");
+
+//     if (selectedMonth === "all") {
+//       // Yearly view: aggregate hours by month
+//       const monthlyHours = Array.from({ length: 12 }, (_, i) => ({
+//         label: format(new Date(0, i), "MMM"),
+//         hours: 0,
+//       }));
+//       allAcceptedShifts
+//         .filter((s) => getYear(new Date(s.date)) === selectedYear)
+//         .forEach((s) => {
+//           const monthIndex = getMonth(new Date(s.date));
+//           monthlyHours[monthIndex].hours += calculateHours(s.from, s.to);
+//         });
+//       consolidatedChartData = { data: monthlyHours, view: "Month" };
+//     } else {
+//       // Daily view: aggregate hours by day for the selected month
+//       const numericMonth = Number(selectedMonth); // <<< FIX IS HERE
+//       const daysInMonth = getDaysInMonth(new Date(selectedYear, numericMonth));
+//       const dailyHours = Array.from({ length: daysInMonth }, (_, i) => ({
+//         label: `${i + 1}`,
+//         hours: 0,
+//       }));
+//       allAcceptedShifts
+//         .filter(
+//           (s) =>
+//             getYear(new Date(s.date)) === selectedYear &&
+//             getMonth(new Date(s.date)) === numericMonth
+//         )
+//         .forEach((s) => {
+//           const dayIndex = getDate(new Date(s.date)) - 1;
+//           dailyHours[dayIndex].hours += calculateHours(s.from, s.to);
+//         });
+//       consolidatedChartData = { data: dailyHours, view: "Day" };
+//     }
+
+//     // --- Most Active Nurse (calculation remains the same) ---
+//     const hoursByNurse = staffData.map((nurse) => {
+//       const monthlyHours = (nurse.workSchedule || [])
+//         .filter(
+//           (s) =>
+//             s.status === "accepted" &&
+//             isWithinInterval(new Date(s.date), currentMonthInterval)
+//         )
+//         .reduce(
+//           (total, shift) => total + calculateHours(shift.from, shift.to),
+//           0
+//         );
+//       return {
+//         name: `${nurse.firstName} ${nurse.lastName}`,
+//         hours: monthlyHours,
+//       };
+//     });
+//     let mostActiveNurse = null;
+//     if (hoursByNurse.length > 0) {
+//       const topPerformer = hoursByNurse.reduce((max, nurse) =>
+//         nurse.hours > max.hours ? nurse : max
+//       );
+//       if (topPerformer.hours > 0) {
+//         mostActiveNurse = topPerformer;
+//       }
+//     }
+
+//     return {
+//       dashboardStats,
+//       shiftStatusData,
+//       dayWiseChartData,
+//       consolidatedChartData,
+//       mostActiveNurse,
+//     };
+//   }, [staffData, selectedNurseId, selectedDate, selectedMonth, selectedYear]);
+
+//   if (isLoading) {
+//     return (
+//       <div className="report-container">
+//         <p>Loading nurse data...</p>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="report-container">
+//         <p style={{ color: "red" }}>{error}</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="report-container">
+//       <div className="report-wrapper">
+//         <h1 className="report-header">Admin Attendance Report</h1>
+
+//         <div className="card-header-flex">
+//           <h2 className="card-title" style={{ marginBottom: 0 }}>
+//             {selectedNurseId === "all"
+//               ? "Overall Stats"
+//               : `Stats for ${
+//                   staffData.find((s) => s._id === selectedNurseId)?.firstName
+//                 }`}
+//           </h2>
+//           <div className="select-wrapper">
+//             <select
+//               className="filter-select"
+//               value={selectedNurseId}
+//               onChange={(e) => setSelectedNurseId(e.target.value)}
+//             >
+//               <option value="all">All Nurses</option>
+//               {staffData.map((nurse) => (
+//                 <option key={nurse._id} value={nurse._id}>
+//                   {nurse.firstName} {nurse.lastName}
+//                 </option>
+//               ))}
+//             </select>
+//             <div className="select-arrow">
+//               <ChevronDown size={16} />
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="dashboard-grid">
+//           <DashboardCard
+//             title="Total Requests"
+//             value={dashboardStats.requests}
+//           />
+//           <DashboardCard
+//             title="Shifts Accepted"
+//             value={dashboardStats.accepted}
+//           />
+//           <DashboardCard
+//             title="Shifts Rejected"
+//             value={dashboardStats.rejected}
+//           />
+//           <DashboardCard
+//             title={`Hours This Month (${format(today, "MMMM")})`}
+//             value={dashboardStats.hoursThisMonth}
+//           />
+//         </div>
+
+//         <div className="main-grid">
+//           <div className="card card-padded">
+//             <h3 className="card-title">Request Status Breakdown</h3>
+//             <ShiftStatusChart data={shiftStatusData} />
+//           </div>
+//           <div className="card most-active-card">
+//             <h3 className="card-title">Most Active This Month</h3>
+//             {mostActiveNurse ? (
+//               <>
+//                 <Crown size={64} color="#f59e0b" />
+//                 <p className="most-active-name">{mostActiveNurse.name}</p>
+//                 <p className="most-active-hours">
+//                   {mostActiveNurse.hours.toFixed(1)}{" "}
+//                   <span className="most-active-hours-label">hours</span>
+//                 </p>
+//                 <p className="most-active-date-label">
+//                   in {format(today, "MMMM yyyy")}
+//                 </p>
+//               </>
+//             ) : (
+//               <p style={{ textAlign: "center", color: "#6b7280" }}>
+//                 No work recorded this month.
+//               </p>
+//             )}
+//           </div>
+//         </div>
+
+//         <div className="card card-padded">
+//           <div className="card-header-flex">
+//             <h3 className="card-title">Day-wise Shifts</h3>
+//             <input
+//               type="date"
+//               value={selectedDate}
+//               onChange={(e) => setSelectedDate(e.target.value)}
+//               className="filter-date"
+//             />
+//           </div>
+//           <DayWiseShiftChart data={dayWiseChartData} />
+//         </div>
+
+//         <div className="card card-padded">
+//           <div className="card-header-flex">
+//             <h3 className="card-title">Consolidated Workload Report</h3>
+//             <div className="date-filter-controls">
+//               <select
+//                 className="filter-select"
+//                 value={selectedMonth}
+//                 onChange={(e) => setSelectedMonth(e.target.value)}
+//               >
+//                 {months.map((m) => (
+//                   <option key={m.value} value={m.value}>
+//                     {m.name}
+//                   </option>
+//                 ))}
+//               </select>
+//               <select
+//                 className="filter-select"
+//                 value={selectedYear}
+//                 onChange={(e) => setSelectedYear(Number(e.target.value))}
+//               >
+//                 {years.map((y) => (
+//                   <option key={y} value={y}>
+//                     {y}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+//           </div>
+//           <ConsolidatedMonthlyChart
+//             data={consolidatedChartData.data}
+//             view={consolidatedChartData.view}
+//           />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AttendanceReport;
+
+import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import {
   PieChart,
   Pie,
@@ -23,329 +1436,288 @@ import {
   startOfMonth,
   endOfMonth,
   isWithinInterval,
+  isSameDay,
+  startOfDay, // Import startOfDay for accurate date comparison
 } from "date-fns";
 
-// --- MOCK DATA ---
-// In a real app, you would fetch this data from an API.
-const staffData = [
-  {
-    _id: "staff001",
-    firstName: "Priya",
-    lastName: "Sharma",
-    workSchedule: [
-      {
-        date: "2025-07-24",
-        from: "2025-07-24T12:30:00",
-        to: "2025-07-24T18:30:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-06",
-        from: "2025-08-06T12:54:00",
-        to: "2025-08-06T20:57:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-07",
-        from: "2025-08-07T10:30:00",
-        to: "2025-08-07T18:30:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-08",
-        from: "2025-08-08T18:00:00",
-        to: "2025-08-08T22:00:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-13",
-        from: "2025-08-13T17:39:00",
-        to: "2025-08-13T21:39:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-29",
-        from: "2025-08-29T10:00:00",
-        to: "2025-08-29T12:00:00",
-        status: "rejected",
-      },
-      {
-        date: "2025-08-29",
-        from: "2025-08-29T14:00:00",
-        to: "2025-08-29T19:00:00",
-        status: "accepted",
-      },
-    ],
-  },
-  {
-    _id: "staff002",
-    firstName: "Anjali",
-    lastName: "Singh",
-    workSchedule: [
-      {
-        date: "2025-08-08",
-        from: "2025-08-08T09:00:00",
-        to: "2025-08-08T17:00:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-10",
-        from: "2025-08-10T10:00:00",
-        to: "2025-08-10T18:00:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-08-12",
-        from: "2025-08-12T08:00:00",
-        to: "2025-08-12T16:00:00",
-        status: "accepted",
-      },
-      {
-        date: "2025-09-01",
-        from: "2025-09-01T09:00:00",
-        to: "2025-09-01T17:00:00",
-        status: "accepted",
-      },
-    ],
-  },
-  {
-    _id: "staff003",
-    firstName: "Mohan",
-    lastName: "Kumar",
-    workSchedule: [
-      {
-        date: "2025-08-06",
-        from: "2025-08-06T23:06:00",
-        to: "2025-08-07T07:06:00",
-        status: "requested",
-      },
-      {
-        date: "2025-07-21",
-        from: "2025-07-21T13:30:00",
-        to: "2025-07-21T21:30:00",
-        status: "cancelled",
-      },
-    ],
-  },
-];
+// Import the CSS file
+import "./AttendanceReport.css";
 
-// --- HELPER FUNCTIONS ---
+// --- HELPER FUNCTIONS & CONSTANTS ---
 const calculateHours = (from, to) => {
   if (!from || !to) return 0;
   return differenceInHours(new Date(to), new Date(from));
 };
 
 const years = Array.from({ length: 5 }, (_, i) => getYear(new Date()) - 2 + i);
-const months = Array.from({ length: 12 }, (_, i) => ({
-  value: i,
-  name: format(new Date(0, i), "MMMM"),
-}));
+// Add "All Months" option to the months array
+const months = [
+  { value: "all", name: "All Months" },
+  ...Array.from({ length: 12 }, (_, i) => ({
+    value: i,
+    name: format(new Date(0, i), "MMMM"),
+  })),
+];
 
-// --- SUB-COMPONENTS ---
+// --- REUSABLE UI & CHART COMPONENTS ---
 
-// 1. Shift Status Pie Chart
-const ShiftStatusChart = ({ data }) => (
-  <div className="bg-white rounded-2xl shadow-lg p-6">
-    <h3 className="text-xl font-bold text-gray-800 mb-4">
-      Shift Requests Status
-    </h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={100}
-          fill="#8884d8"
-          dataKey="value"
-          paddingAngle={5}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
+const DashboardCard = ({ title, value }) => (
+  <div className="dashboard-card">
+    <h4 className="dashboard-card-title">{title}</h4>
+    <p className="dashboard-card-value">{value}</p>
   </div>
 );
 
-// 2. Individual Nurse's Monthly Work Chart
-const MonthlyWorkChart = ({ data }) => (
-  <div className="mt-4">
+const ShiftStatusChart = ({ data }) => (
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie
+        data={data}
+        cx="50%"
+        cy="50%"
+        innerRadius={60}
+        outerRadius={100}
+        fill="#8884d8"
+        dataKey="value"
+        paddingAngle={5}
+      >
+        {data.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={entry.color} />
+        ))}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+);
+
+const DayWiseShiftChart = ({ data }) => (
+  <div style={{ marginTop: "1rem" }}>
     {data.length > 0 ? (
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+          layout="vertical"
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip
-            formatter={(value, name) => [
-              `${value} ${name === "days" ? "days" : "hours"}`,
-              name,
-            ]}
-          />
-          <Legend />
-          <Bar dataKey="days" fill="#8884d8" name="Working Days" />
-          <Bar dataKey="hours" fill="#82ca9d" name="Working Hours" />
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" width={80} />
+          <Tooltip formatter={(value) => `${value} hours`} />
+          <Bar dataKey="hours" fill="#82ca9d" name="Hours Worked" />
         </BarChart>
       </ResponsiveContainer>
     ) : (
-      <p className="text-center text-gray-500 py-10">
-        No accepted shifts to display for this nurse.
+      <p style={{ textAlign: "center", color: "#6b7280", padding: "2.5rem 0" }}>
+        No nurses worked on this day.
       </p>
     )}
   </div>
 );
 
-// 3. Consolidated Daily Report Grid
-const ConsolidatedDailyReport = ({ nurses, dates, month, year }) => {
-  const getColor = (hours) => {
-    if (hours === 0) return "bg-gray-100";
-    if (hours > 0 && hours <= 4) return "bg-green-200";
-    if (hours > 4 && hours <= 8) return "bg-green-400 font-semibold";
-    return "bg-green-600 text-white font-bold";
-  };
-
-  return (
-    <div className="w-full overflow-x-auto mt-4">
-      <table className="min-w-full divide-y divide-gray-200 border">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="sticky left-0 bg-gray-50 z-10 px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Nurse
-            </th>
-            {dates.map((day) => (
-              <th
-                key={day}
-                className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase"
-              >
-                {day}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {nurses.map((nurse) => (
-            <tr key={nurse._id}>
-              <td className="sticky left-0 bg-white z-10 px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                {nurse.firstName} {nurse.lastName}
-              </td>
-              {nurse.dailyHours.map((hours, index) => (
-                <td
-                  key={index}
-                  className={`px-2 py-3 text-center text-xs ${getColor(hours)}`}
-                  title={hours > 0 ? `${hours.toFixed(1)} hrs` : "No work"}
-                >
-                  {hours > 0 ? hours.toFixed(1) : "-"}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+const ConsolidatedMonthlyChart = ({ data, view }) => (
+  <div style={{ marginTop: "1rem" }}>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="label" />
+        <YAxis />
+        <Tooltip formatter={(value) => `${value.toFixed(1)} hours`} />
+        <Legend />
+        <Bar
+          dataKey="hours"
+          fill="#4f46e5"
+          name={`Total Hours Worked by ${view}`}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
 
 // --- MAIN ATTENDANCE REPORT COMPONENT ---
 
 const AttendanceReport = () => {
-  const today = new Date();
+  const [staffData, setStaffData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const today = startOfDay(new Date()); // Use startOfDay to compare dates accurately
   const [selectedNurseId, setSelectedNurseId] = useState("all");
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
+  const [selectedDate, setSelectedDate] = useState(format(today, "yyyy-MM-dd"));
+  const [selectedMonth, setSelectedMonth] = useState("all");
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
 
-  // --- DATA PROCESSING using useMemo for performance ---
-
-  // 1. Shift Status breakdown data
-  const shiftStatusData = useMemo(() => {
-    const counts = staffData
-      .flatMap((s) => s.workSchedule)
-      .reduce((acc, shift) => {
-        acc[shift.status] = (acc[shift.status] || 0) + 1;
-        return acc;
-      }, {});
-
-    const COLORS = {
-      accepted: "#22c55e",
-      rejected: "#ef4444",
-      requested: "#facc15",
-      cancelled: "#6b7280",
+  useEffect(() => {
+    const fetchNurses = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get(
+          "http://localhost:9999/admin-service/api/admin/nurse/nurseDetails"
+        );
+        if (response.status === 200 && Array.isArray(response.data)) {
+          const validNurses = response.data.filter(
+            (nurse) => nurse.firstName && nurse.lastName
+          );
+          setStaffData(validNurses);
+        } else {
+          console.log("API did not return a valid array of nurses");
+          setError("Could not fetch nurse data.");
+        }
+      } catch (error) {
+        console.error("Error fetching nurses:", error);
+        setError("Failed to fetch nurse data. Please check the console.");
+      } finally {
+        setIsLoading(false);
+      }
     };
-    return Object.keys(counts).map((status) => ({
-      name: status.charAt(0).toUpperCase() + status.slice(1),
-      value: counts[status],
-      color: COLORS[status] || "#a8a29e",
-    }));
+
+    fetchNurses();
   }, []);
 
-  // 2. Data for individual nurse's monthly chart
-  const individualMonthlyData = useMemo(() => {
-    if (selectedNurseId === "all") return [];
-    const nurse = staffData.find((s) => s._id === selectedNurseId);
-    if (!nurse) return [];
+  const {
+    dashboardStats,
+    shiftStatusData,
+    dayWiseChartData,
+    consolidatedChartData,
+    mostActiveNurse,
+  } = useMemo(() => {
+    if (staffData.length === 0) {
+      return {
+        dashboardStats: {
+          requests: 0,
+          accepted: 0,
+          rejected: 0,
+          hoursThisMonth: "0.0",
+        },
+        shiftStatusData: [],
+        dayWiseChartData: [],
+        consolidatedChartData: { data: [], view: "Month" },
+        mostActiveNurse: null,
+      };
+    }
 
-    const monthlyMetrics = {};
-    nurse.workSchedule
-      .filter((s) => s.status === "accepted")
-      .forEach((shift) => {
-        const monthName = format(new Date(shift.date), "MMM yyyy");
-        if (!monthlyMetrics[monthName]) {
-          monthlyMetrics[monthName] = { days: new Set(), hours: 0 };
-        }
-        monthlyMetrics[monthName].days.add(shift.date);
-        monthlyMetrics[monthName].hours += calculateHours(shift.from, shift.to);
-      });
+    const filteredStaffDataForCards =
+      selectedNurseId === "all"
+        ? staffData
+        : staffData.filter((s) => s._id === selectedNurseId);
 
-    return Object.keys(monthlyMetrics).map((month) => ({
-      month,
-      days: monthlyMetrics[month].days.size,
-      hours: parseFloat(monthlyMetrics[month].hours.toFixed(2)),
-    }));
-  }, [selectedNurseId]);
-
-  // 3. Data for consolidated daily grid
-  const consolidatedDailyData = useMemo(() => {
-    const daysInMonth = getDaysInMonth(new Date(selectedYear, selectedMonth));
-    const dates = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
-    const nurses = staffData.map((nurse) => {
-      const dailyHours = new Array(daysInMonth).fill(0);
-      nurse.workSchedule
-        .filter(
-          (s) =>
-            s.status === "accepted" &&
-            getMonth(new Date(s.date)) === selectedMonth &&
-            getYear(new Date(s.date)) === selectedYear
-        )
-        .forEach((shift) => {
-          const day = getDate(new Date(shift.date));
-          dailyHours[day - 1] += calculateHours(shift.from, shift.to);
-        });
-      return { ...nurse, dailyHours };
-    });
-
-    return { nurses, dates };
-  }, [selectedMonth, selectedYear]);
-
-  // 4. Find the most active nurse for the current month
-  const mostActiveNurse = useMemo(() => {
+    const allShifts = filteredStaffDataForCards.flatMap(
+      (s) => s.workSchedule || []
+    );
+    const acceptedShifts = allShifts.filter((s) => s.status === "accepted");
     const currentMonthInterval = {
       start: startOfMonth(today),
       end: endOfMonth(today),
     };
+
+    // UPDATED: Only include hours from past or present shifts
+    const hoursThisMonth = acceptedShifts
+      .filter(
+        (s) =>
+          isWithinInterval(new Date(s.date), currentMonthInterval) &&
+          new Date(s.date) <= today
+      )
+      .reduce(
+        (total, shift) => total + calculateHours(shift.from, shift.to),
+        0
+      );
+
+    const dashboardStats = {
+      requests: allShifts.length,
+      accepted: acceptedShifts.length,
+      rejected: allShifts.filter((s) => s.status === "rejected").length,
+      hoursThisMonth: hoursThisMonth.toFixed(1),
+    };
+
+    const statusCounts = allShifts.reduce((acc, shift) => {
+      acc[shift.status] = (acc[shift.status] || 0) + 1;
+      return acc;
+    }, {});
+    const SHIFT_COLORS = {
+      accepted: "#22c55e",
+      rejected: "#ef4444",
+      requested: "#facc15",
+      cancelled: "#6b7280",
+      removed: "#9ca3af",
+    };
+    const shiftStatusData = Object.keys(statusCounts).map((status) => ({
+      name: status.charAt(0).toUpperCase() + status.slice(1),
+      value: statusCounts[status],
+      color: SHIFT_COLORS[status] || "#a8a29e",
+    }));
+
+    const dayWiseDate = new Date(selectedDate);
+    const dayWiseChartData = filteredStaffDataForCards
+      .map((nurse) => {
+        const hoursOnDay = (nurse.workSchedule || [])
+          // UPDATED: Only calculate hours if the selected date is not in the future
+          .filter(
+            (s) =>
+              s.status === "accepted" &&
+              isSameDay(new Date(s.date), dayWiseDate) &&
+              dayWiseDate <= today
+          )
+          .reduce(
+            (total, shift) => total + calculateHours(shift.from, shift.to),
+            0
+          );
+        return { name: nurse.firstName, hours: hoursOnDay };
+      })
+      .filter((item) => item.hours > 0);
+
+    let consolidatedChartData = {};
+    const allAcceptedShifts = staffData
+      .flatMap((s) => s.workSchedule || [])
+      .filter((s) => s.status === "accepted");
+
+    if (selectedMonth === "all") {
+      const monthlyHours = Array.from({ length: 12 }, (_, i) => ({
+        label: format(new Date(0, i), "MMM"),
+        hours: 0,
+      }));
+      allAcceptedShifts
+        // UPDATED: Only include shifts from the past/present
+        .filter(
+          (s) =>
+            getYear(new Date(s.date)) === selectedYear &&
+            new Date(s.date) <= today
+        )
+        .forEach((s) => {
+          const monthIndex = getMonth(new Date(s.date));
+          monthlyHours[monthIndex].hours += calculateHours(s.from, s.to);
+        });
+      consolidatedChartData = { data: monthlyHours, view: "Month" };
+    } else {
+      const numericMonth = Number(selectedMonth);
+      const daysInMonth = getDaysInMonth(new Date(selectedYear, numericMonth));
+      const dailyHours = Array.from({ length: daysInMonth }, (_, i) => ({
+        label: `${i + 1}`,
+        hours: 0,
+      }));
+      allAcceptedShifts
+        // UPDATED: Only include shifts from the past/present
+        .filter(
+          (s) =>
+            getYear(new Date(s.date)) === selectedYear &&
+            getMonth(new Date(s.date)) === numericMonth &&
+            new Date(s.date) <= today
+        )
+        .forEach((s) => {
+          const dayIndex = getDate(new Date(s.date)) - 1;
+          dailyHours[dayIndex].hours += calculateHours(s.from, s.to);
+        });
+      consolidatedChartData = { data: dailyHours, view: "Day" };
+    }
+
     const hoursByNurse = staffData.map((nurse) => {
-      const monthlyHours = nurse.workSchedule
+      const monthlyHours = (nurse.workSchedule || [])
+        // UPDATED: Only include shifts from the past/present
         .filter(
           (s) =>
             s.status === "accepted" &&
-            isWithinInterval(new Date(s.date), currentMonthInterval)
+            isWithinInterval(new Date(s.date), currentMonthInterval) &&
+            new Date(s.date) <= today
         )
         .reduce(
           (total, shift) => total + calculateHours(shift.from, shift.to),
@@ -356,94 +1728,147 @@ const AttendanceReport = () => {
         hours: monthlyHours,
       };
     });
+    let mostActiveNurse = null;
+    if (hoursByNurse.length > 0) {
+      const topPerformer = hoursByNurse.reduce((max, nurse) =>
+        nurse.hours > max.hours ? nurse : max
+      );
+      if (topPerformer.hours > 0) {
+        mostActiveNurse = topPerformer;
+      }
+    }
 
-    if (hoursByNurse.length === 0) return null;
-    const topPerformer = hoursByNurse.reduce((max, nurse) =>
-      nurse.hours > max.hours ? nurse : max
+    return {
+      dashboardStats,
+      shiftStatusData,
+      dayWiseChartData,
+      consolidatedChartData,
+      mostActiveNurse,
+    };
+  }, [
+    staffData,
+    selectedNurseId,
+    selectedDate,
+    selectedMonth,
+    selectedYear,
+    today,
+  ]);
+
+  if (isLoading) {
+    return (
+      <div className="report-container">
+        <p>Loading nurse data...</p>
+      </div>
     );
-    return topPerformer.hours > 0 ? topPerformer : null;
-  }, []);
+  }
+
+  if (error) {
+    return (
+      <div className="report-container">
+        <p style={{ color: "red" }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-          Admin Attendance Report
-        </h1>
+    <div className="report-container">
+      <div className="report-wrapper">
+        <h1 className="report-header">Nurse Attendance Report</h1>
 
-        {/* Top Row: Overall stats and Top Performer */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
+        <div className="card-header-flex">
+          <h2 className="card-title" style={{ marginBottom: 0 }}>
+            {selectedNurseId === "all"
+              ? "Overall Stats"
+              : `Stats for ${
+                  staffData.find((s) => s._id === selectedNurseId)?.firstName
+                }`}
+          </h2>
+          <div className="select-wrapper">
+            <select
+              className="filter-select"
+              value={selectedNurseId}
+              onChange={(e) => setSelectedNurseId(e.target.value)}
+            >
+              <option value="all">All Nurses</option>
+              {staffData.map((nurse) => (
+                <option key={nurse._id} value={nurse._id}>
+                  {nurse.firstName} {nurse.lastName}
+                </option>
+              ))}
+            </select>
+            <div className="select-arrow">
+              <ChevronDown size={16} />
+            </div>
+          </div>
+        </div>
+
+        <div className="dashboard-grid">
+          <DashboardCard
+            title="Total Requests"
+            value={dashboardStats.requests}
+          />
+          <DashboardCard
+            title="Shifts Accepted"
+            value={dashboardStats.accepted}
+          />
+          <DashboardCard
+            title="Shifts Rejected"
+            value={dashboardStats.rejected}
+          />
+          <DashboardCard
+            title={`Hours This Month (${format(today, "MMMM")})`}
+            value={dashboardStats.hoursThisMonth}
+          />
+        </div>
+
+        <div className="main-grid">
+          <div className="card card-padded">
+            <h3 className="card-title">Request Status Breakdown</h3>
             <ShiftStatusChart data={shiftStatusData} />
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-center items-center">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Most Active This Month
-            </h3>
+          <div className="card most-active-card">
+            <h3 className="card-title">Most Active This Month</h3>
             {mostActiveNurse ? (
               <>
-                <Crown className="w-16 h-16 text-amber-400" />
-                <p className="text-lg font-semibold text-gray-700 mt-4">
-                  {mostActiveNurse.name}
-                </p>
-                <p className="text-3xl font-bold text-indigo-600 mt-2">
+                <Crown size={64} color="#f59e0b" />
+                <p className="most-active-name">{mostActiveNurse.name}</p>
+                <p className="most-active-hours">
                   {mostActiveNurse.hours.toFixed(1)}{" "}
-                  <span className="text-lg font-medium text-gray-500">
-                    hours
-                  </span>
+                  <span className="most-active-hours-label">hours</span>
                 </p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="most-active-date-label">
                   in {format(today, "MMMM yyyy")}
                 </p>
               </>
             ) : (
-              <p className="text-center text-gray-500">
+              <p style={{ textAlign: "center", color: "#6b7280" }}>
                 No work recorded this month.
               </p>
             )}
           </div>
         </div>
 
-        {/* Individual Report Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-            <h3 className="text-xl font-bold text-gray-800">
-              Individual Monthly Report
-            </h3>
-            <div className="relative">
-              <select
-                value={selectedNurseId}
-                onChange={(e) => setSelectedNurseId(e.target.value)}
-                className="appearance-none block w-full bg-white border border-gray-300 rounded-lg py-2 px-4 pr-8 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="all">All Nurses</option>
-                {staffData.map((nurse) => (
-                  <option key={nurse._id} value={nurse._id}>
-                    {nurse.firstName} {nurse.lastName}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <ChevronDown className="h-4 w-4" />
-              </div>
-            </div>
+        <div className="card card-padded">
+          <div className="card-header-flex">
+            <h3 className="card-title">Day-wise Shifts</h3>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="filter-date"
+            />
           </div>
-          {selectedNurseId !== "all" && (
-            <MonthlyWorkChart data={individualMonthlyData} />
-          )}
+          <DayWiseShiftChart data={dayWiseChartData} />
         </div>
 
-        {/* Consolidated Report Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-            <h3 className="text-xl font-bold text-gray-800">
-              Consolidated Daily Report
-            </h3>
-            <div className="flex gap-2">
+        <div className="card card-padded">
+          <div className="card-header-flex">
+            <h3 className="card-title">Consolidated Workload Report</h3>
+            <div className="date-filter-controls">
               <select
+                className="filter-select"
                 value={selectedMonth}
-                onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                onChange={(e) => setSelectedMonth(e.target.value)}
               >
                 {months.map((m) => (
                   <option key={m.value} value={m.value}>
@@ -452,9 +1877,9 @@ const AttendanceReport = () => {
                 ))}
               </select>
               <select
+                className="filter-select"
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {years.map((y) => (
                   <option key={y} value={y}>
@@ -464,10 +1889,9 @@ const AttendanceReport = () => {
               </select>
             </div>
           </div>
-          <ConsolidatedDailyReport
-            {...consolidatedDailyData}
-            month={selectedMonth}
-            year={selectedYear}
+          <ConsolidatedMonthlyChart
+            data={consolidatedChartData.data}
+            view={consolidatedChartData.view}
           />
         </div>
       </div>

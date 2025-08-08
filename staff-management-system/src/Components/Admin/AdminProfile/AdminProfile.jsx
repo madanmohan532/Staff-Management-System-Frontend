@@ -1,133 +1,644 @@
-// AdminProfile.jsx
+// import React, { useState, useEffect } from "react";
+// import { FaEdit, FaTimes, FaSignOutAlt } from "react-icons/fa";
+// import { useForm } from "react-hook-form";
+// import styled, { createGlobalStyle } from "styled-components";
+// import axios from "axios";
+
+// // Global styles for body and font
+// const GlobalStyle = createGlobalStyle`
+//   @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+//   body {
+//     font-family: 'Inter', sans-serif;
+//     background-color: #f0f2f5;
+//   }
+// `;
+
+// const AdminProfile = ({ adminData, onUpdate }) => {
+//   const {
+//     register,
+//     handleSubmit,
+//     formState: { errors },
+//     watch,
+//     reset,
+//   } = useForm({
+//     mode: "onBlur",
+//   });
+
+//   const newPasswordValue = watch("newPassword");
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [message, setMessage] = useState("");
+
+//   useEffect(() => {
+//     if (adminData) {
+//       reset({
+//         firstName: adminData.firstName || "",
+//         lastName: adminData.lastName || "",
+//         phone: adminData.contactDetails?.phone || "",
+//         email: adminData.contactDetails?.email || "",
+//         street: adminData.address?.street || "",
+//         city: adminData.address?.city || "",
+//         state: adminData.address?.state || "",
+//         pincode: adminData.address?.pincode || "",
+//         currentPassword: "",
+//         newPassword: "",
+//         confirmNewPassword: "",
+//       });
+//     }
+//   }, [adminData, reset]);
+
+//   const onSubmit = async (data) => {
+//     setMessage("");
+//     const payload = {
+//       firstName: data.firstName,
+//       lastName: data.lastName,
+//       contactDetails: { phone: data.phone, email: data.email },
+//       address: {
+//         street: data.street,
+//         city: data.city,
+//         state: data.state,
+//         pincode: data.pincode,
+//       },
+//     };
+
+//     if (data.newPassword) {
+//       payload.newPassword = data.newPassword;
+//       payload.currentPassword = data.currentPassword;
+//     }
+
+//     try {
+//       const response = await axios.put(
+//         `http://localhost:9999/admin-service/api/admin/admin/${adminData._id}`,
+//         payload
+//       );
+//       if (response.status === 200) {
+//         setMessage("Profile updated successfully! ✅");
+//         setIsEditing(false);
+//         if (onUpdate) onUpdate(response.data);
+//       }
+//     } catch (error) {
+//       console.error("Error updating profile:", error.response || error);
+//       setMessage(
+//         error.response?.status === 401
+//           ? "Incorrect current password. Please try again. 🔒"
+//           : "Error updating profile. Please try again later. ⚠️"
+//       );
+//     }
+//   };
+
+//   const handleCancel = () => {
+//     reset();
+//     setIsEditing(false);
+//     setMessage("");
+//   };
+
+//   const handleLogout = () => {
+//     localStorage.clear();
+//     window.location.href = "/";
+//   };
+
+//   return (
+//     <>
+//       <GlobalStyle />
+//       <ProfileCard>
+//         <CardTitle>Admin Profile</CardTitle>
+
+//         {!isEditing && (
+//           <CardHeaderActions>
+//             <ActionIconWrapper
+//               onClick={() => setIsEditing(true)}
+//               title="Edit Profile"
+//             >
+//               <FaEdit className="edit-icon" />
+//             </ActionIconWrapper>
+//             <ActionIconWrapper onClick={handleLogout} title="Logout">
+//               <FaSignOutAlt className="logout-icon" />
+//             </ActionIconWrapper>
+//           </CardHeaderActions>
+//         )}
+
+//         <DisplayForm>
+//           <FormLayoutGrid>
+//             <FormFieldGroup>
+//               <label>First Name</label>
+//               <input type="text" value={watch("firstName")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroup>
+//               <label>Last Name</label>
+//               <input type="text" value={watch("lastName")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroup>
+//               <label>Phone</label>
+//               <input type="text" value={watch("phone")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroup>
+//               <label>Email</label>
+//               <input type="email" value={watch("email")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroupFullWidth>
+//               <label>Street</label>
+//               <input type="text" value={watch("street")} disabled />
+//             </FormFieldGroupFullWidth>
+//             <FormFieldGroup>
+//               <label>City</label>
+//               <input type="text" value={watch("city")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroup>
+//               <label>State</label>
+//               <input type="text" value={watch("state")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroup>
+//               <label>Pincode</label>
+//               <input type="text" value={watch("pincode")} disabled />
+//             </FormFieldGroup>
+//             <FormFieldGroup>
+//               <label>Password</label>
+//               <input type="password" value="********" disabled />
+//             </FormFieldGroup>
+//           </FormLayoutGrid>
+//         </DisplayForm>
+
+//         <EditPanel isOpen={isEditing}>
+//           <EditPanelHeader>
+//             <h3>Edit Profile</h3>
+//             <CloseIcon onClick={handleCancel} title="Cancel" />
+//           </EditPanelHeader>
+//           <EditForm onSubmit={handleSubmit(onSubmit)} noValidate>
+//             <FormLayoutGridEdit>
+//               <FormFieldGroup>
+//                 <label>ID</label>
+//                 <input type="text" value={adminData?.id || ""} disabled />
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>Verification ID</label>
+//                 <input
+//                   type="text"
+//                   value={adminData?.uniqueVerificationId || ""}
+//                   disabled
+//                 />
+//               </FormFieldGroup>
+
+//               <FormFieldGroupFullWidth>
+//                 <h4>Change Password</h4>
+//               </FormFieldGroupFullWidth>
+//               <FormFieldGroup>
+//                 <label>Current Password</label>
+//                 <input
+//                   type="password"
+//                   {...register("currentPassword", {
+//                     validate: (value) =>
+//                       watch("newPassword") && !value
+//                         ? "Current password is required"
+//                         : true,
+//                   })}
+//                   placeholder="Enter current password"
+//                 />
+//                 {errors.currentPassword && (
+//                   <FieldError>{errors.currentPassword.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>New Password</label>
+//                 <input
+//                   type="password"
+//                   {...register("newPassword", {
+//                     minLength: {
+//                       value: 8,
+//                       message: "Must be at least 8 characters",
+//                     },
+//                   })}
+//                   placeholder="Enter new password"
+//                 />
+//                 {errors.newPassword && (
+//                   <FieldError>{errors.newPassword.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>Confirm New Password</label>
+//                 <input
+//                   type="password"
+//                   {...register("confirmNewPassword", {
+//                     validate: (value) =>
+//                       value === newPasswordValue || "Passwords do not match",
+//                   })}
+//                   placeholder="Confirm new password"
+//                 />
+//                 {errors.confirmNewPassword && (
+//                   <FieldError>{errors.confirmNewPassword.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+
+//               <FormFieldGroupFullWidth>
+//                 <h4>Personal Details</h4>
+//               </FormFieldGroupFullWidth>
+//               <FormFieldGroup>
+//                 <label>First Name</label>
+//                 <input
+//                   type="text"
+//                   {...register("firstName", {
+//                     required: "First Name is required.",
+//                   })}
+//                 />
+//                 {errors.firstName && (
+//                   <FieldError>{errors.firstName.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>Last Name</label>
+//                 <input
+//                   type="text"
+//                   {...register("lastName", {
+//                     required: "Last Name is required.",
+//                   })}
+//                 />
+//                 {errors.lastName && (
+//                   <FieldError>{errors.lastName.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>Phone</label>
+//                 <input
+//                   type="text"
+//                   {...register("phone", {
+//                     required: "Phone is required.",
+//                     pattern: {
+//                       value: /^[0-9]{10}$/,
+//                       message: "Must be 10 digits.",
+//                     },
+//                   })}
+//                 />
+//                 {errors.phone && (
+//                   <FieldError>{errors.phone.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>Email</label>
+//                 <input
+//                   type="email"
+//                   {...register("email", {
+//                     required: "Email is required.",
+//                     pattern: {
+//                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+//                       message: "Invalid email format.",
+//                     },
+//                   })}
+//                 />
+//                 {errors.email && (
+//                   <FieldError>{errors.email.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroupFullWidth>
+//                 <label>Street</label>
+//                 <input
+//                   type="text"
+//                   {...register("street", { required: "Street is required." })}
+//                 />
+//                 {errors.street && (
+//                   <FieldError>{errors.street.message}</FieldError>
+//                 )}
+//               </FormFieldGroupFullWidth>
+//               <FormFieldGroup>
+//                 <label>City</label>
+//                 <input
+//                   type="text"
+//                   {...register("city", { required: "City is required." })}
+//                 />
+//                 {errors.city && <FieldError>{errors.city.message}</FieldError>}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>State</label>
+//                 <input
+//                   type="text"
+//                   {...register("state", { required: "State is required." })}
+//                 />
+//                 {errors.state && (
+//                   <FieldError>{errors.state.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//               <FormFieldGroup>
+//                 <label>Pincode</label>
+//                 <input
+//                   type="text"
+//                   {...register("pincode", {
+//                     required: "Pincode is required.",
+//                     pattern: {
+//                       value: /^[0-9]{6}$/,
+//                       message: "Must be 6 digits.",
+//                     },
+//                   })}
+//                 />
+//                 {errors.pincode && (
+//                   <FieldError>{errors.pincode.message}</FieldError>
+//                 )}
+//               </FormFieldGroup>
+//             </FormLayoutGridEdit>
+//             <FormActions>
+//               <Button type="submit" save>
+//                 Save Changes
+//               </Button>
+//               <Button type="button" cancel onClick={handleCancel}>
+//                 Cancel
+//               </Button>
+//             </FormActions>
+//           </EditForm>
+//           {message && <StatusAlert>{message}</StatusAlert>}
+//         </EditPanel>
+//       </ProfileCard>
+//     </>
+//   );
+// };
+
+// // Styled Components
+// const ProfileCard = styled.div`
+//   max-width: 800px;
+//   margin: 40px auto;
+//   padding: 30px;
+//   background-color: #fff;
+//   border-radius: 12px;
+//   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+//   position: relative;
+//   overflow: hidden;
+// `;
+
+// const CardTitle = styled.h2`
+//   text-align: center;
+//   color: #1a237e;
+//   margin-bottom: 30px;
+//   font-size: 2rem;
+//   font-weight: 600;
+// `;
+
+// const CardHeaderActions = styled.div`
+//   position: absolute;
+//   top: 15px;
+//   right: 15px;
+//   display: flex;
+//   gap: 15px;
+//   z-index: 5;
+// `;
+
+// const ActionIconWrapper = styled.div`
+//   cursor: pointer;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   transition: transform 0.2s ease-in-out;
+//   font-size: 1.5rem;
+
+//   .edit-icon {
+//     color: #1a237e;
+//   }
+//   .logout-icon {
+//     color: #d32f2f;
+//   }
+
+//   &:hover {
+//     transform: scale(1.1);
+//   }
+// `;
+
+// const DisplayForm = styled.div`
+//   background-color: #f8f9fa;
+//   padding: 25px;
+//   border-radius: 10px;
+//   border: 1px solid #e0e0e0;
+// `;
+
+// const FormLayoutGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: 1fr 1fr;
+//   gap: 20px;
+//   @media (max-width: 768px) {
+//     grid-template-columns: 1fr;
+//   }
+// `;
+
+// const FormFieldGroup = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   position: relative;
+
+//   label {
+//     font-weight: 500;
+//     margin-bottom: 8px;
+//     color: #555;
+//     font-size: 0.9rem;
+//   }
+
+//   input {
+//     padding: 12px;
+//     border: 1px solid #ccc;
+//     border-radius: 8px;
+//     font-size: 1rem;
+//     background-color: #fff;
+//     transition: border-color 0.3s, box-shadow 0.3s;
+
+//     &:focus {
+//       outline: none;
+//       border-color: #1a237e;
+//       box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.2);
+//     }
+
+//     &:disabled {
+//       background-color: #e9ecef;
+//       color: #6c757d;
+//       cursor: not-allowed;
+//       border: 1px solid #dcdfe4;
+//     }
+//   }
+// `;
+
+// const FormFieldGroupFullWidth = styled(FormFieldGroup)`
+//   grid-column: 1 / -1;
+//   h4 {
+//     margin: 1rem 0 0;
+//     color: #1a237e;
+//     border-bottom: 1px solid #e0e0e0;
+//     padding-bottom: 0.5rem;
+//   }
+// `;
+
+// const EditPanel = styled.div`
+//   position: fixed;
+//   top: 0;
+//   right: 0;
+//   width: 450px;
+//   max-width: 90vw;
+//   height: 100vh;
+//   background-color: #ffffff;
+//   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+//   transform: translateX(${(props) => (props.isOpen ? "0" : "100%")});
+//   transition: transform 0.3s ease-in-out;
+//   padding: 30px;
+//   box-sizing: border-box;
+//   overflow-y: auto;
+//   z-index: 20;
+// `;
+
+// const EditPanelHeader = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   margin-bottom: 25px;
+//   padding-bottom: 15px;
+//   border-bottom: 1px solid #e0e0e0;
+
+//   h3 {
+//     margin: 0;
+//     font-size: 1.5rem;
+//     color: #1a237e;
+//   }
+// `;
+
+// const CloseIcon = styled(FaTimes)`
+//   font-size: 1.5rem;
+//   color: #777;
+//   cursor: pointer;
+//   transition: color 0.3s;
+//   &:hover {
+//     color: #d32f2f;
+//   }
+// `;
+
+// const EditForm = styled.form``;
+
+// const FormLayoutGridEdit = styled(FormLayoutGrid)`
+//   grid-template-columns: 1fr;
+//   gap: 15px;
+//   @media (min-width: 768px) {
+//     grid-template-columns: 1fr 1fr;
+//     & > .form-field-group:nth-child(3),
+//     & > .form-field-group:nth-child(4),
+//     & > .form-field-group:nth-child(5) {
+//       grid-column: 1 / -1;
+//     }
+//   }
+// `;
+
+// const FormActions = styled.div`
+//   margin-top: 25px;
+//   display: flex;
+//   gap: 15px;
+//   justify-content: flex-end;
+// `;
+
+// const Button = styled.button`
+//   padding: 12px 25px;
+//   font-size: 1rem;
+//   font-weight: 500;
+//   border: none;
+//   border-radius: 8px;
+//   cursor: pointer;
+//   transition: background-color 0.3s, transform 0.2s;
+//   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+//   ${(props) =>
+//     props.save &&
+//     `
+//     background-color: #4caf50;
+//     color: #fff;
+//     &:hover {
+//       background-color: #388e3c;
+//       transform: translateY(-2px);
+//     }
+//   `}
+
+//   ${(props) =>
+//     props.cancel &&
+//     `
+//     background-color: #f44336;
+//     color: #fff;
+//     &:hover {
+//       background-color: #d32f2f;
+//       transform: translateY(-2px);
+//     }
+//   `}
+// `;
+
+// const FieldError = styled.p`
+//   color: #d32f2f;
+//   font-size: 0.8rem;
+//   margin-top: 5px;
+// `;
+
+// const StatusAlert = styled.p`
+//   text-align: center;
+//   margin-top: 20px;
+//   font-size: 1rem;
+//   font-weight: 500;
+//   padding: 10px 15px;
+//   border-radius: 8px;
+//   background-color: #e3f2fd;
+//   border: 1px solid #bbdefb;
+//   color: #1a237e;
+// `;
+
+// export default AdminProfile;
+
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTimes, FaSignOutAlt } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import styled, { keyframes, createGlobalStyle } from "styled-components";
 import axios from "axios";
-import "./AdminProfile.css";
+
+// Global styles for body and font
+const GlobalStyle = createGlobalStyle`
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5;
+  }
+`;
 
 const AdminProfile = ({ adminData, onUpdate }) => {
-  // State for form fields
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [street, setStreet] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [uniqueVerificationId, setUniqueVerificationId] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm({
+    mode: "onBlur",
+  });
 
-  // State for password fields
-  const [currentPasswordInput, setCurrentPasswordInput] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-
-  // UI state
-  const [message, setMessage] = useState("");
+  const newPasswordValue = watch("newPassword");
   const [isEditing, setIsEditing] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
 
-  // Effect to load admin data when the component mounts or data changes
   useEffect(() => {
     if (adminData) {
-      setFirstName(adminData.firstName || "");
-      setLastName(adminData.lastName || "");
-      setPhone(adminData.contactDetails?.phone || "");
-      setEmail(adminData.contactDetails?.email || "");
-      setStreet(adminData.address?.street || "");
-      setCity(adminData.address?.city || "");
-      setState(adminData.address?.state || "");
-      setPincode(adminData.address?.pincode || "");
-      setUniqueVerificationId(adminData.unique_verification_id || "");
-
-      // Reset editing-related state
-      setCurrentPasswordInput("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      setMessage("");
-      setErrors({});
+      reset({
+        firstName: adminData.firstName || "",
+        lastName: adminData.lastName || "",
+        phone: adminData.contactDetails?.phone || "",
+        email: adminData.contactDetails?.email || "",
+        street: adminData.address?.street || "",
+        city: adminData.address?.city || "",
+        state: adminData.address?.state || "",
+        pincode: adminData.address?.pincode || "",
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
     }
-  }, [adminData]);
+  }, [adminData, reset]);
 
-  // Client-side form validation function
-  const validateForm = () => {
-    let newErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{10}$/;
-    const pincodeRegex = /^[0-9]{6}$/;
-
-    // Check for empty fields
-    if (!firstName.trim()) newErrors.firstName = "First Name is required.";
-    if (!lastName.trim()) newErrors.lastName = "Last Name is required.";
-    if (!phone.trim()) newErrors.phone = "Phone Number is required.";
-    if (!email.trim()) newErrors.email = "Email is required.";
-    if (!street.trim()) newErrors.street = "Street is required.";
-    if (!city.trim()) newErrors.city = "City is required.";
-    if (!state.trim()) newErrors.state = "State is required.";
-    if (!pincode.trim()) newErrors.pincode = "Pincode is required.";
-
-    // Check formats
-    if (email.trim() && !emailRegex.test(email)) {
-      newErrors.email = "Invalid email format.";
-    }
-    if (phone.trim() && !phoneRegex.test(phone)) {
-      newErrors.phone = "Phone number must be 10 digits.";
-    }
-    if (pincode.trim() && !pincodeRegex.test(pincode)) {
-      newErrors.pincode = "Pincode must be 6 digits.";
-    }
-
-    // Password-related validations
-    if (newPassword || confirmNewPassword) {
-      if (!currentPasswordInput) {
-        newErrors.currentPasswordInput =
-          "Current password is required to change password.";
-      }
-      if (newPassword !== confirmNewPassword) {
-        newErrors.confirmNewPassword =
-          "New password and confirm password do not match.";
-      }
-      if (newPassword.length > 0 && newPassword.length < 8) {
-        newErrors.newPassword = "New password must be at least 8 characters.";
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setMessage("");
-    setErrors({});
-
-    // Run client-side validation
-    if (!validateForm()) {
-      setMessage("Please correct the errors in the form. ❌");
-      return;
-    }
-
-    // IMPORTANT SECURITY NOTE: In a real-world app, password validation and comparison
-    // must be done on the backend. This front-end code only checks if the fields are
-    // filled correctly and that the new passwords match. The server is responsible
-    // for verifying the `currentPasswordInput` against the hashed password.
     const payload = {
-      firstName,
-      lastName,
-      contactDetails: {
-        phone,
-        email,
-      },
+      firstName: data.firstName,
+      lastName: data.lastName,
+      contactDetails: { phone: data.phone, email: data.email },
       address: {
-        street,
-        city,
-        state,
-        pincode,
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        pincode: data.pincode,
       },
     };
 
-    if (newPassword && newPassword === confirmNewPassword) {
-      payload.newPassword = newPassword;
-      payload.currentPassword = currentPasswordInput; // Send to server for validation
+    if (data.newPassword) {
+      payload.newPassword = data.newPassword;
+      payload.currentPassword = data.currentPassword;
     }
 
     try {
@@ -135,283 +646,517 @@ const AdminProfile = ({ adminData, onUpdate }) => {
         `http://localhost:9999/admin-service/api/admin/admin/${adminData._id}`,
         payload
       );
-
       if (response.status === 200) {
         setMessage("Profile updated successfully! ✅");
         setIsEditing(false);
-        setCurrentPasswordInput("");
-        setNewPassword("");
-        setConfirmNewPassword("");
         if (onUpdate) onUpdate(response.data);
-      } else {
-        setMessage("Failed to update profile. Please check your inputs. ❌");
       }
     } catch (error) {
       console.error("Error updating profile:", error.response || error);
-      if (error.response?.status === 401) {
-        setMessage("Incorrect current password. Please try again. 🔒");
-        setErrors({ currentPasswordInput: "Incorrect current password." });
-      } else {
-        setMessage("Error updating profile. Please try again later. ⚠️");
-      }
+      setMessage(
+        error.response?.status === 401
+          ? "Incorrect current password. Please try again. 🔒"
+          : "Error updating profile. Please try again later. ⚠️"
+      );
     }
   };
 
   const handleCancel = () => {
-    // Reset state to original values from adminData
-    if (adminData) {
-      setFirstName(adminData.firstName || "");
-      setLastName(adminData.lastName || "");
-      setPhone(adminData.contactDetails?.phone || "");
-      setEmail(adminData.contactDetails?.email || "");
-      setStreet(adminData.address?.street || "");
-      setCity(adminData.address?.city || "");
-      setState(adminData.address?.state || "");
-      setPincode(adminData.address?.pincode || "");
-    }
-    // Reset password and UI states
-    setCurrentPasswordInput("");
-    setNewPassword("");
-    setConfirmNewPassword("");
+    reset();
     setIsEditing(false);
     setMessage("");
-    setErrors({});
   };
 
   const handleLogout = () => {
-    // NOTE: In a real app, this should clear auth tokens and redirect securely.
     localStorage.clear();
-    // Using a custom modal instead of alert()
-    // alert("Logging out...");
     window.location.href = "/";
   };
 
   return (
-    <div className="admin-profile-card">
-      <h2 className="card-title">Admin Profile</h2>
+    <>
+      <GlobalStyle />
+      <ProfileCard>
+        <CardTitle>Admin Profile</CardTitle>
 
-      {!isEditing && (
-        <div className="card-header-actions">
-          <div
-            className="action-icon-wrapper"
-            onClick={() => setIsEditing(true)}
-            title="Edit Profile"
-          >
-            <FaEdit className="edit-icon" />
-          </div>
-          <div
-            className="action-icon-wrapper"
-            onClick={handleLogout}
-            title="Logout"
-          >
-            <FaSignOutAlt className="logout-icon" />
-          </div>
-        </div>
-      )}
+        {!isEditing && (
+          <CardHeaderActions>
+            <ActionIconWrapper
+              onClick={() => setIsEditing(true)}
+              title="Edit Profile"
+            >
+              <FaEdit className="edit-icon" />
+            </ActionIconWrapper>
+            <ActionIconWrapper onClick={handleLogout} title="Logout">
+              <FaSignOutAlt className="logout-icon" />
+            </ActionIconWrapper>
+          </CardHeaderActions>
+        )}
 
-      {/* Main Profile View (Non-editable) */}
-      <div className="profile-display">
-        <form className="display-form">
-          <div className="form-layout-grid">
-            <div className="form-field-group">
+        <DisplayForm>
+          <FormLayoutGrid>
+            <FormFieldGroup>
               <label>First Name</label>
-              <input type="text" value={firstName} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("firstName")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroup>
               <label>Last Name</label>
-              <input type="text" value={lastName} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("lastName")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroup>
               <label>Phone</label>
-              <input type="text" value={phone} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("phone")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroup>
               <label>Email</label>
-              <input type="email" value={email} disabled />
-            </div>
-            <div className="form-field-group--full-width">
+              <input type="email" value={watch("email")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroupFullWidth>
               <label>Street</label>
-              <input type="text" value={street} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("street")} disabled />
+            </FormFieldGroupFullWidth>
+            <FormFieldGroup>
               <label>City</label>
-              <input type="text" value={city} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("city")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroup>
               <label>State</label>
-              <input type="text" value={state} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("state")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroup>
               <label>Pincode</label>
-              <input type="text" value={pincode} disabled />
-            </div>
-            <div className="form-field-group">
+              <input type="text" value={watch("pincode")} disabled />
+            </FormFieldGroup>
+            <FormFieldGroup>
               <label>Password</label>
               <input type="password" value="********" disabled />
-            </div>
-          </div>
-        </form>
-      </div>
+            </FormFieldGroup>
+          </FormLayoutGrid>
+        </DisplayForm>
 
-      {/* Edit Panel (Sliding from Right) */}
-      <div
-        className={`profile-edit-panel ${
-          isEditing ? "profile-edit-panel--open" : ""
-        }`}
-      >
-        <div className="edit-panel-header">
-          <h3>Edit Profile</h3>
-          <FaTimes
-            className="close-icon"
-            onClick={handleCancel}
-            title="Cancel"
-          />
-        </div>
-        <form onSubmit={handleUpdate} className="edit-form">
-          <div className="form-layout-grid">
-            <div className="form-field-group">
-              <label>ID</label>
-              <input type="text" value={adminData?.id || ""} disabled />
-            </div>
-            <div className="form-field-group">
-              <label>Verification ID</label>
-              <input
-                type="text"
-                value={adminData.uniqueVerificationId}
-                disabled
-              />
-            </div>
+        {isEditing && (
+          <ModalOverlay onClick={handleCancel}>
+            <ModalContent onClick={(e) => e.stopPropagation()}>
+              <ModalHeader>
+                <h2>Edit Profile</h2>
+                <CloseButton onClick={handleCancel}>&times;</CloseButton>
+              </ModalHeader>
+              <ModalForm onSubmit={handleSubmit(onSubmit)} noValidate>
+                <FormLayoutGridEdit>
+                  <FormFieldGroup>
+                    <label>ID</label>
+                    <input type="text" value={adminData?._id || ""} disabled />
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>Verification ID</label>
+                    <input
+                      type="text"
+                      value={adminData?.unique_verification_id || ""}
+                      disabled
+                    />
+                  </FormFieldGroup>
 
-            <div className="form-field-group">
-              <label>Current Password</label>
-              <input
-                type="password"
-                value={currentPasswordInput}
-                onChange={(e) => setCurrentPasswordInput(e.target.value)}
-                placeholder="Enter current password"
-              />
-              {errors.currentPasswordInput && (
-                <p className="field-error">{errors.currentPasswordInput}</p>
-              )}
-            </div>
-            <div className="form-field-group">
-              <label>New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-              />
-              {errors.newPassword && (
-                <p className="field-error">{errors.newPassword}</p>
-              )}
-            </div>
-            <div className="form-field-group">
-              <label>Confirm New Password</label>
-              <input
-                type="password"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                placeholder="Confirm new password"
-              />
-              {errors.confirmNewPassword && (
-                <p className="field-error">{errors.confirmNewPassword}</p>
-              )}
-            </div>
+                  <FormFieldGroupFullWidth>
+                    <h4>Change Password</h4>
+                  </FormFieldGroupFullWidth>
+                  <FormFieldGroup>
+                    <label>Current Password</label>
+                    <input
+                      type="password"
+                      {...register("currentPassword", {
+                        validate: (value) =>
+                          watch("newPassword") && !value
+                            ? "Current password is required"
+                            : true,
+                      })}
+                      placeholder="Enter current password"
+                    />
+                    {errors.currentPassword && (
+                      <FieldError>{errors.currentPassword.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>New Password</label>
+                    <input
+                      type="password"
+                      {...register("newPassword", {
+                        minLength: {
+                          value: 8,
+                          message: "Must be at least 8 characters",
+                        },
+                      })}
+                      placeholder="Enter new password"
+                    />
+                    {errors.newPassword && (
+                      <FieldError>{errors.newPassword.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroupFullWidth>
+                    <label>Confirm New Password</label>
+                    <input
+                      type="password"
+                      {...register("confirmNewPassword", {
+                        validate: (value) =>
+                          value === newPasswordValue ||
+                          "Passwords do not match",
+                      })}
+                      placeholder="Confirm new password"
+                    />
+                    {errors.confirmNewPassword && (
+                      <FieldError>
+                        {errors.confirmNewPassword.message}
+                      </FieldError>
+                    )}
+                  </FormFieldGroupFullWidth>
 
-            <div className="form-field-group">
-              <label>First Name</label>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-              {errors.firstName && (
-                <p className="field-error">{errors.firstName}</p>
-              )}
-            </div>
-            <div className="form-field-group">
-              <label>Last Name</label>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-              {errors.lastName && (
-                <p className="field-error">{errors.lastName}</p>
-              )}
-            </div>
-            <div className="form-field-group">
-              <label>Phone</label>
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              {errors.phone && <p className="field-error">{errors.phone}</p>}
-            </div>
-            <div className="form-field-group">
-              <label>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {errors.email && <p className="field-error">{errors.email}</p>}
-            </div>
-            <div className="form-field-group--full-width">
-              <label>Street</label>
-              <input
-                type="text"
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-              />
-              {errors.street && <p className="field-error">{errors.street}</p>}
-            </div>
-            <div className="form-field-group">
-              <label>City</label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-              {errors.city && <p className="field-error">{errors.city}</p>}
-            </div>
-            <div className="form-field-group">
-              <label>State</label>
-              <input
-                type="text"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-              />
-              {errors.state && <p className="field-error">{errors.state}</p>}
-            </div>
-            <div className="form-field-group">
-              <label>Pincode</label>
-              <input
-                type="text"
-                value={pincode}
-                onChange={(e) => setPincode(e.target.value)}
-              />
-              {errors.pincode && (
-                <p className="field-error">{errors.pincode}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="submit" className="btn-save">
-              Save Changes
-            </button>
-            <button type="button" onClick={handleCancel} className="btn-cancel">
-              Cancel
-            </button>
-          </div>
-        </form>
-        {message && <p className="status-alert">{message}</p>}
-      </div>
-    </div>
+                  <FormFieldGroupFullWidth>
+                    <h4>Personal Details</h4>
+                  </FormFieldGroupFullWidth>
+                  <FormFieldGroup>
+                    <label>First Name</label>
+                    <input
+                      type="text"
+                      {...register("firstName", {
+                        required: "First Name is required.",
+                      })}
+                    />
+                    {errors.firstName && (
+                      <FieldError>{errors.firstName.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>Last Name</label>
+                    <input
+                      type="text"
+                      {...register("lastName", {
+                        required: "Last Name is required.",
+                      })}
+                    />
+                    {errors.lastName && (
+                      <FieldError>{errors.lastName.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>Phone</label>
+                    <input
+                      type="text"
+                      {...register("phone", {
+                        required: "Phone is required.",
+                        pattern: {
+                          value: /^[0-9]{10}$/,
+                          message: "Must be 10 digits.",
+                        },
+                      })}
+                    />
+                    {errors.phone && (
+                      <FieldError>{errors.phone.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      {...register("email", {
+                        required: "Email is required.",
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: "Invalid email format.",
+                        },
+                      })}
+                    />
+                    {errors.email && (
+                      <FieldError>{errors.email.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroupFullWidth>
+                    <label>Street</label>
+                    <input
+                      type="text"
+                      {...register("street", {
+                        required: "Street is required.",
+                      })}
+                    />
+                    {errors.street && (
+                      <FieldError>{errors.street.message}</FieldError>
+                    )}
+                  </FormFieldGroupFullWidth>
+                  <FormFieldGroup>
+                    <label>City</label>
+                    <input
+                      type="text"
+                      {...register("city", { required: "City is required." })}
+                    />
+                    {errors.city && (
+                      <FieldError>{errors.city.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>State</label>
+                    <input
+                      type="text"
+                      {...register("state", { required: "State is required." })}
+                    />
+                    {errors.state && (
+                      <FieldError>{errors.state.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                  <FormFieldGroup>
+                    <label>Pincode</label>
+                    <input
+                      type="text"
+                      {...register("pincode", {
+                        required: "Pincode is required.",
+                        pattern: {
+                          value: /^[0-9]{6}$/,
+                          message: "Must be 6 digits.",
+                        },
+                      })}
+                    />
+                    {errors.pincode && (
+                      <FieldError>{errors.pincode.message}</FieldError>
+                    )}
+                  </FormFieldGroup>
+                </FormLayoutGridEdit>
+                <FormActions>
+                  <Button type="submit" $save>
+                    Save Changes
+                  </Button>
+                  <Button type="button" $cancel onClick={handleCancel}>
+                    Cancel
+                  </Button>
+                </FormActions>
+              </ModalForm>
+              {message && <StatusAlert>{message}</StatusAlert>}
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </ProfileCard>
+    </>
   );
 };
+
+// Styled Components
+const fadeIn = keyframes`from { opacity: 0; } to { opacity: 1; }`;
+const slideIn = keyframes`from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; }`;
+
+const ProfileCard = styled.div`
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+`;
+
+const CardTitle = styled.h2`
+  text-align: center;
+  color: #1a237e;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 600;
+`;
+
+const CardHeaderActions = styled.div`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 15px;
+  z-index: 5;
+`;
+
+const ActionIconWrapper = styled.div`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+  font-size: 1.5rem;
+
+  .edit-icon {
+    color: #1a237e;
+  }
+  .logout-icon {
+    color: #d32f2f;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+  }
+`;
+
+const DisplayForm = styled.div`
+  background-color: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+`;
+
+const FormLayoutGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FormFieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.9rem;
+  }
+
+  input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: #1a237e;
+      box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.2);
+    }
+
+    &:disabled {
+      background-color: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+      border: 1px solid #dcdfe4;
+    }
+  }
+`;
+
+const FormFieldGroupFullWidth = styled(FormFieldGroup)`
+  grid-column: 1 / -1;
+  h4 {
+    margin: 1rem 0 0;
+    color: #1a237e;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+  }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: ${fadeIn} 0.3s;
+`;
+
+const ModalContent = styled.div`
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: ${slideIn} 0.3s;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ModalHeader = styled.header`
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+  &:hover {
+    color: #d32f2f;
+  }
+`;
+
+const ModalForm = styled.form`
+  padding: 1.5rem;
+  overflow-y: auto;
+`;
+
+const FormLayoutGridEdit = styled(FormLayoutGrid)`
+  grid-template-columns: 1fr 1fr;
+`;
+
+const FormActions = styled.div`
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+`;
+
+const Button = styled.button`
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  ${(props) =>
+    props.$save &&
+    `
+    background-color: #4caf50;
+    color: #fff;
+    &:hover {
+      background-color: #388e3c;
+      transform: translateY(-2px);
+    }
+  `}
+
+  ${(props) =>
+    props.$cancel &&
+    `
+    background-color: #f44336;
+    color: #fff;
+    &:hover {
+      background-color: #d32f2f;
+      transform: translateY(-2px);
+    }
+  `}
+`;
+
+const FieldError = styled.p`
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin-top: 5px;
+`;
+
+const StatusAlert = styled.p`
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-color: #e3f2fd;
+  border: 1px solid #bbdefb;
+  color: #1a237e;
+`;
 
 export default AdminProfile;

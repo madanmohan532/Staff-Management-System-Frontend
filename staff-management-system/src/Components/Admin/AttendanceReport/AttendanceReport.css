@@ -1,0 +1,302 @@
+/* src/AttendanceReport.css */
+
+/* General Layout & Fonts */
+.report-container {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .report-container {
+    padding: 2rem;
+  }
+}
+
+.report-wrapper {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Header */
+.report-header {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .report-header {
+    font-size: 2.25rem;
+  }
+}
+
+/* Reusable Card Component */
+.card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  margin-bottom: 2rem;
+}
+
+.card-padded {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.card-header-flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .card-header-flex {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* NEW: Dashboard Cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.dashboard-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Form Elements */
+.filter-select,
+.filter-date {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.filter-select {
+  padding-right: 2.5rem;
+}
+
+.filter-select:focus,
+.filter-date:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #c7d2fe;
+  border-color: #6366f1;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 200px;
+}
+
+.select-arrow {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 0.75rem;
+  color: #374151;
+}
+
+.date-filter-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Grid Layouts */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .main-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Consolidated Table Report */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.report-table {
+  min-width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
+}
+
+.report-table thead {
+  background-color: #f9fafb;
+}
+
+.report-table th,
+.report-table td {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.report-table th {
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.report-table tbody tr {
+  border-top: 1px solid #e5e7eb;
+}
+
+.report-table .nurse-name-cell {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: white;
+  text-align: left;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-weight: 500;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+/* Dynamic classes for hours cells */
+.hours-cell {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+}
+.hours-none {
+  background-color: #f3f4f6;
+}
+.hours-low {
+  background-color: #d1fae5;
+}
+.hours-medium {
+  background-color: #6ee7b7;
+  font-weight: 600;
+}
+.hours-high {
+  background-color: #10b981;
+  color: white;
+  font-weight: 700;
+}
+/* Styles for the card container */
+.card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  margin-bottom: 2rem;
+}
+
+/* Specific layout for the "Most Active" card */
+.most-active-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+/* Title inside the card ("Most Active This Month") */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+/* Nurse's name */
+.most-active-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin-top: 1rem;
+}
+
+/* Large number for the hours */
+.most-active-hours {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-top: 0.5rem;
+}
+
+/* The word "hours" next to the number */
+.most-active-hours-label {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* The date label ("in August 2025") */
+.most-active-date-label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
